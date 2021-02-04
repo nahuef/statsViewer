@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"html/template"
 	"os"
 	"sort"
 )
@@ -27,13 +28,16 @@ type Scenario struct {
 	Name        string
 	TimesPlayed int
 	Challenges  []Challenge
+	Chart       template.HTML
+	ByDateMax   map[string]float64
+	ByDateAvg   map[string]float64
 }
 
 // Stats ...
 type Stats struct {
 	Scenarios   map[string]*Scenario
 	Sorted      []*Scenario
-	UniqueScens int
+	TotalScens  int
 	TotalPlayed int
 }
 
@@ -42,6 +46,49 @@ type Stats struct {
 // var dateAsc = "dateAsc"
 
 var timesPlayed = "timesPlayed"
+
+// for kDate, vScore := range scen.ByDateMax {
+// 	date = append(date, kDate)
+// 	scores = append(scores, opts.LineData{Value: vScore})
+// }
+
+func (s *Stats) forEach() {
+	for _, scen := range s.Scenarios {
+		ByDate := make(map[string][]float64, 0)
+		for _, chall := range scen.Challenges {
+			ByDate[chall.Date] = append(ByDate[chall.Date], chall.Score)
+		}
+
+		max, avg := group(ByDate)
+		scen.ByDateMax = max
+		scen.ByDateAvg = avg
+		// fmt.Printf("scen %+v:", scen)
+	}
+}
+
+func group(ByDate map[string][]float64) (map[string]float64, map[string]float64) {
+	ByDateMax := make(map[string]float64, 0)
+	ByDateAvg := make(map[string]float64, 0)
+
+	for k, v := range ByDate {
+		var max float64
+		var avg float64
+		var sum float64
+		for i, e := range v {
+			if i == 0 || e > max {
+				max = e
+			}
+			sum += e
+		}
+
+		avg = sum / float64(len(v))
+
+		ByDateMax[k] = float64(int(max*10)) / 10
+		ByDateAvg[k] = float64(int(avg*10)) / 10
+	}
+
+	return ByDateMax, ByDateAvg
+}
 
 func (s *Stats) sortBy(condition string) {
 	var sorted []*Scenario
@@ -94,7 +141,7 @@ func ParseStats(files []os.FileInfo) Stats {
 			stats.Scenarios[challenge.Name].TimesPlayed++
 			stats.Scenarios[challenge.Name].Challenges = append(stats.Scenarios[challenge.Name].Challenges, challenge)
 		} else {
-			stats.UniqueScens++
+			stats.TotalScens++
 			stats.Scenarios[challenge.Name] = &Scenario{
 				fileName:    file.Name(),
 				Name:        challenge.Name,
@@ -104,6 +151,9 @@ func ParseStats(files []os.FileInfo) Stats {
 		}
 	}
 
+	// Sort & group
+	stats.forEach()
+	AddCharts(&stats)
 	stats.sortBy(timesPlayed)
 	return stats
 }

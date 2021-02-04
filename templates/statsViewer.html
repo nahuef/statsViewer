@@ -11,13 +11,15 @@
       </div>
 
       <div class="title">
-        <h5>Unique scenarios: {{.UniqueScens}}</h5>
+        <h5>Total scenarios: {{.TotalScens}}</h5>
         <h5>Total challenges: {{.TotalPlayed}}</h5>
+        <br>
+        [Scenario name]: [Number of challenges played]
       </div>
 
       <div>
         {{range .Sorted}}
-            <li class="list-group-item">{{.Name}}: {{.TimesPlayed}}</li>
+            <li class="list-group-item">{{.Name}}: {{.TimesPlayed}} {{.Chart}}</li>
         {{end}}
       </div>
     </div>
