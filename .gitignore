@@ -3,3 +3,7 @@ main.exe
 statsViewer.exe
 statsViewer.html
 statsViewer.txt
+config.json
+
+go.mod
+go.sum

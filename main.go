@@ -1,86 +1,77 @@
 package main
 
 import (
-	"embed"
+	"bufio"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
-	"sort"
-	"strings"
+	"os/exec"
 	"text/template"
 )
 
+var statsViewer = "statsViewer"
+var statsViewerHTML = statsViewer + ".html"
+var defaultPath = "./stats"
+
+// StatsPath ...
+var StatsPath, statsNotFound = getStatsPath()
+
 func main() {
-	//go:embed templates/*
-	var templates embed.FS
-
-	files, err := ioutil.ReadDir("./stats")
+	files, err := ioutil.ReadDir(StatsPath)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(statsNotFound + " \"stats\" folder not found. \n Press \"enter\" key to exit.")
+		bufio.NewReader(os.Stdin).ReadBytes('\n')
+		os.Exit(1)
 	}
 
-	var statsCount = make(map[string]int)
+	stats := ParseStats(files)
 
-	type statCount struct {
-		Name  string
-		Count int
-	}
-
-	for _, file := range files {
-		if file.IsDir() == true {
-			continue
-		}
-
-		scenName := (strings.Split(file.Name(), " - Challenge - "))[0]
-
-		if _, ok := statsCount[scenName]; ok {
-			statsCount[scenName]++
-		} else {
-			statsCount[scenName] = 1
-		}
-	}
-
-	var sorted []statCount
-	for name, count := range statsCount {
-		sorted = append(sorted, statCount{name, count})
-	}
-	sort.SliceStable(sorted, func(i, j int) bool {
-		return sorted[i].Count > sorted[j].Count
-	})
-
-	t, err := template.ParseFS(templates, "templates/statsViewer.html")
-	if err != nil {
-		log.Fatal(err)
-	}
-	f, err := os.Create("statsViewer.html")
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = t.Execute(f, sorted)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// Output HTML
+	t, err := template.ParseFiles("templates/" + statsViewerHTML)
+	Check(err)
+	f, err := os.Create(statsViewerHTML)
+	Check(err)
+	err = t.Execute(f, stats)
+	Check(err)
 	f.Close()
 
-	fileName := "statsViewer.txt"
+	// Output TXT
+	var fileName = statsViewer + ".txt"
 	err = ioutil.WriteFile(fileName, []byte(""), 0777)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	file, error := os.OpenFile(fileName, os.O_WRONLY|os.O_APPEND, 0777)
-	if error != nil {
-		log.Fatal(error)
-	}
+	Check(err)
+	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_APPEND, 0777)
+	Check(err)
 	defer file.Close()
+	for _, scenario := range stats.Sorted {
+		line := fmt.Sprintln(scenario.Name+":", scenario.TimesPlayed)
 
-	for _, value := range sorted {
-		line := fmt.Sprintln(value.Name+":", value.Count)
-		fmt.Print(line)
+		_, err := file.WriteString(line)
+		Check(err)
+	}
 
-		if _, err := file.WriteString(line); err != nil {
-			log.Fatal(err)
+	fmt.Println("Success!")
+	exec.Command("cmd", "/C", "start", statsViewerHTML).Run()
+}
+
+func getStatsPath() (path string, errStr string) {
+	config, err := ioutil.ReadFile("./config.json")
+	if err != nil {
+		errStr += "No config.json file found."
+	} else {
+		var parsedConfig map[string]interface{}
+		err = json.Unmarshal(config, &parsedConfig)
+		if err != nil {
+			errStr = "Error reading config.json."
+		} else {
+			path = parsedConfig["stats_path"].(string) + "\\"
 		}
 	}
+
+	if path == "" {
+		path = defaultPath
+	}
+
+	return path, errStr
 }
