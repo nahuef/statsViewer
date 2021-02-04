@@ -24,13 +24,14 @@ type Challenge struct {
 
 // Scenario ...
 type Scenario struct {
-	fileName    string
-	Name        string
-	TimesPlayed int
-	Challenges  []Challenge
-	Chart       template.HTML
-	ByDateMax   map[string]float64
-	ByDateAvg   map[string]float64
+	fileName       string
+	Name           string
+	TimesPlayed    int
+	Challenges     []Challenge
+	ByDateMax      map[string]float64
+	ByDateAvg      map[string]float64
+	ChartByDateMax template.HTML
+	ChartByDateAvg template.HTML
 }
 
 // Stats ...
@@ -41,20 +42,11 @@ type Stats struct {
 	TotalPlayed int
 }
 
-// TODO:
-// var dateDesc = "dateDesc"
-// var dateAsc = "dateAsc"
-
 var timesPlayed = "timesPlayed"
-
-// for kDate, vScore := range scen.ByDateMax {
-// 	date = append(date, kDate)
-// 	scores = append(scores, opts.LineData{Value: vScore})
-// }
 
 func (s *Stats) forEach() {
 	for _, scen := range s.Scenarios {
-		ByDate := make(map[string][]float64, 0)
+		ByDate := map[string][]float64{}
 		for _, chall := range scen.Challenges {
 			ByDate[chall.Date] = append(ByDate[chall.Date], chall.Score)
 		}
@@ -62,13 +54,12 @@ func (s *Stats) forEach() {
 		max, avg := group(ByDate)
 		scen.ByDateMax = max
 		scen.ByDateAvg = avg
-		// fmt.Printf("scen %+v:", scen)
 	}
 }
 
 func group(ByDate map[string][]float64) (map[string]float64, map[string]float64) {
-	ByDateMax := make(map[string]float64, 0)
-	ByDateAvg := make(map[string]float64, 0)
+	ByDateMax := map[string]float64{}
+	ByDateAvg := map[string]float64{}
 
 	for k, v := range ByDate {
 		var max float64
@@ -109,7 +100,7 @@ func (s *Stats) sortBy(condition string) {
 // ParseStats ...
 func ParseStats(files []os.FileInfo) Stats {
 	stats := Stats{
-		Scenarios: make(map[string]*Scenario),
+		Scenarios: map[string]*Scenario{},
 	}
 
 	for _, file := range files {
