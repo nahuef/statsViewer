@@ -44,7 +44,7 @@ func main() {
 	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_APPEND, 0777)
 	Check(err)
 	defer file.Close()
-	for _, scenario := range stats.Sorted {
+	for _, scenario := range stats.SortedTimesPlayed {
 		line := fmt.Sprintln(scenario.Name+":", scenario.TimesPlayed)
 
 		_, err := file.WriteString(line)

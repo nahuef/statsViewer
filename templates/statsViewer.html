@@ -14,12 +14,12 @@
         <h5>Total scenarios: {{.TotalScens}}</h5>
         <h5>Total challenges: {{.TotalPlayed}}</h5>
         <br>
-        [Scenario name]: [Number of challenges played]
+        [Scenario]: [Challenges played]
       </div>
 
       <div>
-        {{range .Sorted}}
-            <li class="list-group-item">{{.Name}}: {{.TimesPlayed}} {{.ChartByDateMax}} {{.ChartByDateAvg}}</li>
+        {{range .SortedTimesPlayed}}
+            <li class="list-group-item"><h5>{{.Name}}: {{.TimesPlayed}}</h5> {{.ChartByDateMax}}</li>
         {{end}}
       </div>
     </div>

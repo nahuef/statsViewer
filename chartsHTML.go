@@ -10,6 +10,8 @@ import (
 	chartrender "github.com/go-echarts/go-echarts/v2/render"
 )
 
+// Code from https://blog.cubieserver.de/2020/how-to-render-standalone-html-snippets-with-go-echarts/
+
 // adapted from
 // https://github.com/go-echarts/go-echarts/blob/master/templates/base.go
 // https://github.com/go-echarts/go-echarts/blob/master/templates/header.go

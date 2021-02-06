@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"os"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 var extractor = Extract{}
@@ -28,43 +30,103 @@ type Scenario struct {
 	Name           string
 	TimesPlayed    int
 	Challenges     []Challenge
-	ByDateMax      map[string]float64
-	ByDateAvg      map[string]float64
+	Highscore      float64
+	Lowscore       float64
+	LowestAvg      float64
+	ByDateMax      []map[string]float64
+	ByDateAvg      []map[string]float64
 	ChartByDateMax template.HTML
 	ChartByDateAvg template.HTML
 }
 
 // Stats ...
 type Stats struct {
-	Scenarios   map[string]*Scenario
-	Sorted      []*Scenario
-	TotalScens  int
-	TotalPlayed int
+	Scenarios         map[string]*Scenario
+	SortedTimesPlayed []*Scenario
+	TotalScens        int
+	TotalPlayed       int
 }
 
 var timesPlayed = "timesPlayed"
 
-func (s *Stats) forEach() {
+func (s *Stats) forEachScenario() {
+	var sortedTimesPlayed []*Scenario
+
 	for _, scen := range s.Scenarios {
+		sortedTimesPlayed = append(sortedTimesPlayed, scen)
+		sort.SliceStable(sortedTimesPlayed, func(i, j int) bool {
+			return sortedTimesPlayed[i].TimesPlayed > sortedTimesPlayed[j].TimesPlayed
+		})
+
+		scen.Lowscore = scen.Challenges[0].Score
+
 		ByDate := map[string][]float64{}
 		for _, chall := range scen.Challenges {
 			ByDate[chall.Date] = append(ByDate[chall.Date], chall.Score)
+
+			if chall.Score > scen.Highscore {
+				scen.Highscore = chall.Score
+			}
+			if chall.Score < scen.Lowscore {
+				scen.Lowscore = chall.Score
+			}
 		}
 
 		max, avg := group(ByDate)
-		scen.ByDateMax = max
-		scen.ByDateAvg = avg
+
+		for k, v := range max {
+			scen.ByDateMax = append(scen.ByDateMax, map[string]float64{k: v})
+		}
+
+		sort.SliceStable(scen.ByDateMax, func(i, j int) bool {
+			var iDate int
+			for k := range scen.ByDateMax[i] {
+				iDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+			}
+			var jDate int
+			for k := range scen.ByDateMax[j] {
+				jDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+			}
+
+			return iDate < jDate
+		})
+
+		scen.LowestAvg = scen.Highscore
+		for k, v := range avg {
+			scen.ByDateAvg = append(scen.ByDateAvg, map[string]float64{k: v})
+			if v < scen.LowestAvg {
+				scen.LowestAvg = v
+			}
+		}
+
+		sort.SliceStable(scen.ByDateAvg, func(i, j int) bool {
+			var iDate int
+			for k := range scen.ByDateAvg[i] {
+				iDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+			}
+			var jDate int
+			for k := range scen.ByDateAvg[j] {
+				jDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+			}
+
+			return iDate < jDate
+		})
+
+		LineChart(scen)
 	}
+
+	s.SortedTimesPlayed = sortedTimesPlayed
 }
 
-func group(ByDate map[string][]float64) (map[string]float64, map[string]float64) {
+func group(challsByDate map[string][]float64) (map[string]float64, map[string]float64) {
 	ByDateMax := map[string]float64{}
 	ByDateAvg := map[string]float64{}
 
-	for k, v := range ByDate {
+	for k, v := range challsByDate {
 		var max float64
 		var avg float64
 		var sum float64
+
 		for i, e := range v {
 			if i == 0 || e > max {
 				max = e
@@ -79,22 +141,6 @@ func group(ByDate map[string][]float64) (map[string]float64, map[string]float64)
 	}
 
 	return ByDateMax, ByDateAvg
-}
-
-func (s *Stats) sortBy(condition string) {
-	var sorted []*Scenario
-	for _, scen := range s.Scenarios {
-		sorted = append(sorted, scen)
-	}
-
-	switch condition {
-	case timesPlayed:
-		sort.SliceStable(sorted, func(i, j int) bool {
-			return sorted[i].TimesPlayed > sorted[j].TimesPlayed
-		})
-	}
-
-	s.Sorted = sorted
 }
 
 // ParseStats ...
@@ -142,9 +188,6 @@ func ParseStats(files []os.FileInfo) Stats {
 		}
 	}
 
-	// Sort & group
-	stats.forEach()
-	AddCharts(&stats)
-	stats.sortBy(timesPlayed)
+	stats.forEachScenario()
 	return stats
 }
