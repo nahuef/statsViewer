@@ -1,7 +1,30 @@
 <html>
   <head>
-    <title>Most played scenarios</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>Kovaak Stats Viewer</title>
+    <link rel="stylesheet" href="static/bootstrap.min.css">
+    <script>
+        function toggleChart(id) {
+            const chart = document.getElementById("chart"+id);
+            const btn = document.getElementById("btn"+id);
+            if (chart.style.display === "none") {
+                chart.style.display = "block";
+                btn.innerText = "Hide chart";
+            } else {
+                chart.style.display = "none";
+                btn.innerText = "Show chart";
+            }
+        }
+        function toggleAll() {
+            const charts = document.getElementsByClassName("charts")
+            Array.from(charts).forEach(c => {
+                if (c.style.display === "none") {
+                    c.style.display = "block";
+                } else {
+                    c.style.display = "none";
+                }
+            });
+        }
+    </script>
   </head>
 
   <body>
@@ -15,11 +38,16 @@
         <h5>Total challenges: {{.TotalPlayed}}</h5>
         <br>
         [Scenario]: [Challenges played]
+        <br>
+        <button class="btn" onclick="toggleAll()">Show/hide charts</button>
       </div>
 
       <div>
         {{range .SortedTimesPlayed}}
-            <li class="list-group-item"><h5>{{.Name}}: {{.TimesPlayed}}</h5> {{.ChartByDateMax}}</li>
+            <li class="list-group-item"><h5>{{.Name}}: {{.TimesPlayed}}</h5>
+                <button class="btn" id="btn{{.Name}}" onclick="toggleChart('{{.Name}}')">Show chart</button>
+                <div class="charts" id="chart{{.Name}}">{{.ChartByDate}}</div>
+            </li>
         {{end}}
       </div>
     </div>

@@ -7,8 +7,8 @@ import (
 	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
-// LineChart ...
-func LineChart(scen *Scenario) {
+// AddLineChart ...
+func AddLineChart(scen *Scenario) {
 	lineMax := charts.NewLine()
 	lineMax.Renderer = newSnippetRenderer(lineMax, lineMax.Validate)
 	lineMax.SetGlobalOptions(chartGlobalOpts(max, scen.Name, len(scen.ByDateMax), scen.Highscore, scen.LowestAvg))
@@ -20,27 +20,33 @@ func LineChart(scen *Scenario) {
 	maxDates := []string{}
 	maxScores := []opts.LineData{}
 	for _, dateScore := range scen.ByDateMax {
-		for k, v := range dateScore {
-			maxDates = append(maxDates, SimplifyDate(k))
-			maxScores = append(maxScores, opts.LineData{Value: v})
+		for date, chall := range dateScore {
+			maxDates = append(maxDates, SimplifyDate(date))
+			maxScores = append(maxScores, opts.LineData{
+				Name:  fmt.Sprintf("%v: %v. FOV: %v. %v", SimplifyDate(date), chall.Score, chall.FOV, chall.sensStr()),
+				Value: chall.Score,
+			})
 		}
 	}
 
 	avgDates := []string{}
 	avgScores := []opts.LineData{}
 	for _, dateScore := range scen.ByDateAvg {
-		for k, v := range dateScore {
-			avgDates = append(avgDates, SimplifyDate(k))
-			avgScores = append(avgScores, opts.LineData{Value: v})
+		for date, score := range dateScore {
+			avgDates = append(avgDates, SimplifyDate(date))
+			avgScores = append(avgScores, opts.LineData{
+				Name:  fmt.Sprintf("%v: %v. ", SimplifyDate(date), score),
+				Value: score,
+			})
 		}
 	}
 
 	lineMax.SetXAxis(maxDates).
-		AddSeries("Max score", maxScores).
-		AddSeries("Avg score", avgScores).
+		AddSeries("Max scores", maxScores).
+		AddSeries("Average scores", avgScores).
 		SetSeriesOptions(seriesOpts)
 	var htmlSnippet = renderToHTML(lineMax)
-	scen.ChartByDateMax = htmlSnippet
+	scen.ChartByDate = htmlSnippet
 }
 
 var max = "max"
@@ -51,7 +57,7 @@ var seriesOpts = charts.WithLabelOpts(opts.Label{Show: true, Color: "black"})
 func titleOpts(scenName string, length int) charts.GlobalOpts {
 	return charts.WithTitleOpts(opts.Title{
 		Title:    scenName,
-		Subtitle: fmt.Sprintf("Grouped by days, %v datapoints.", length),
+		Subtitle: fmt.Sprintf("Grouped by day, %v datapoints.", length),
 	})
 }
 
@@ -83,7 +89,10 @@ func toolBoxOpts(scenName string) charts.GlobalOpts {
 }
 
 var tooltipOpts = charts.WithTooltipOpts(opts.Tooltip{
-	Show: true,
+	Trigger:   "item",
+	TriggerOn: "mousemove|click",
+	Show:      true,
+	Formatter: "{b}",
 })
 
 var xAxisLabelFormatter = opts.AxisLabel{
@@ -106,6 +115,14 @@ func yAxisOpts(highscore, lowestAvg float64) charts.GlobalOpts {
 	})
 }
 
-func chartGlobalOpts(groupedBy string, scenName string, length int, hs float64, ls float64) (charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts) {
-	return titleOpts(scenName, length), toolBoxOpts(scenName), tooltipOpts, xAxisOpts, yAxisOpts(hs, ls)
+var legendOpts = charts.WithLegendOpts(opts.Legend{
+	Show: true,
+})
+
+var initOpts = charts.WithInitializationOpts(opts.Initialization{
+	// AssetsHost: "static/",
+})
+
+func chartGlobalOpts(groupedBy string, scenName string, length int, hs float64, ls float64) (charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts) {
+	return titleOpts(scenName, length), toolBoxOpts(scenName), tooltipOpts, xAxisOpts, yAxisOpts(hs, ls), legendOpts, initOpts
 }

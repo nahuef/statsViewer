@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"html/template"
 	"os"
 	"sort"
@@ -24,19 +25,26 @@ type Challenge struct {
 	FOV       float64
 }
 
+func (c *Challenge) sensStr() string {
+	if c.HSens == c.VSens {
+		return fmt.Sprintf("Sens: %v %v", c.HSens, c.SensScale)
+	}
+
+	return fmt.Sprintf("Vsens: %v, Hsens: %v %v", c.VSens, c.HSens, c.SensScale)
+}
+
 // Scenario ...
 type Scenario struct {
-	fileName       string
-	Name           string
-	TimesPlayed    int
-	Challenges     []Challenge
-	Highscore      float64
-	Lowscore       float64
-	LowestAvg      float64
-	ByDateMax      []map[string]float64
-	ByDateAvg      []map[string]float64
-	ChartByDateMax template.HTML
-	ChartByDateAvg template.HTML
+	fileName    string
+	Name        string
+	TimesPlayed int
+	Challenges  []Challenge
+	Highscore   float64
+	Lowscore    float64
+	LowestAvg   float64
+	ByDateMax   []map[string]Challenge
+	ByDateAvg   []map[string]float64
+	ChartByDate template.HTML
 }
 
 // Stats ...
@@ -46,8 +54,6 @@ type Stats struct {
 	TotalScens        int
 	TotalPlayed       int
 }
-
-var timesPlayed = "timesPlayed"
 
 func (s *Stats) forEachScenario() {
 	var sortedTimesPlayed []*Scenario
@@ -60,10 +66,9 @@ func (s *Stats) forEachScenario() {
 
 		scen.Lowscore = scen.Challenges[0].Score
 
-		ByDate := map[string][]float64{}
+		ByDate := map[string][]Challenge{}
 		for _, chall := range scen.Challenges {
-			ByDate[chall.Date] = append(ByDate[chall.Date], chall.Score)
-
+			ByDate[chall.Date] = append(ByDate[chall.Date], chall)
 			if chall.Score > scen.Highscore {
 				scen.Highscore = chall.Score
 			}
@@ -72,10 +77,10 @@ func (s *Stats) forEachScenario() {
 			}
 		}
 
-		max, avg := group(ByDate)
+		max, avg := Group(ByDate)
 
 		for k, v := range max {
-			scen.ByDateMax = append(scen.ByDateMax, map[string]float64{k: v})
+			scen.ByDateMax = append(scen.ByDateMax, map[string]Challenge{k: v})
 		}
 
 		sort.SliceStable(scen.ByDateMax, func(i, j int) bool {
@@ -112,35 +117,14 @@ func (s *Stats) forEachScenario() {
 			return iDate < jDate
 		})
 
-		LineChart(scen)
+		if scen.TimesPlayed <= 2 || len(ByDate) <= 1 {
+			continue
+		}
+
+		AddLineChart(scen)
 	}
 
 	s.SortedTimesPlayed = sortedTimesPlayed
-}
-
-func group(challsByDate map[string][]float64) (map[string]float64, map[string]float64) {
-	ByDateMax := map[string]float64{}
-	ByDateAvg := map[string]float64{}
-
-	for k, v := range challsByDate {
-		var max float64
-		var avg float64
-		var sum float64
-
-		for i, e := range v {
-			if i == 0 || e > max {
-				max = e
-			}
-			sum += e
-		}
-
-		avg = sum / float64(len(v))
-
-		ByDateMax[k] = float64(int(max*10)) / 10
-		ByDateAvg[k] = float64(int(avg*10)) / 10
-	}
-
-	return ByDateMax, ByDateAvg
 }
 
 // ParseStats ...

@@ -17,7 +17,7 @@ import (
 // https://github.com/go-echarts/go-echarts/blob/master/templates/header.go
 var baseTpl = `
 <div class="container">
-    <div class="item" id="{{ .ChartID }}" style="width:{{ .Initialization.Width }};height:{{ .Initialization.Height }};"></div>
+    <div class="item" id="{{ .ChartID }}" style="width:100%;height:{{ .Initialization.Height }};"></div>
 </div>
 {{- range .JSAssets.Values }}
    <script src="{{ . }}"></script>
