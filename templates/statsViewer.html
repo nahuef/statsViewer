@@ -12,8 +12,7 @@
         function toggleChart(name, action) {
             const c = document.getElementById("chart"+name);
             const btn = document.getElementById("btn"+name);
-
-            if (action === hide || c.style.display === show) {
+            if (action && action === hide || !action && c.style.display === show) {
                 c.style.display = hide;
                 btn.innerText = showStr;
             } else {
@@ -23,13 +22,7 @@
         }
 
         function toggleAll(action) {
-            const charts = document.getElementsByClassName("charts")
-            Array.from(charts).forEach(c => {
-                const btn = document.getElementById("btn"+c.id.replace('chart', ''));
-
-                c.style.display = action
-                if (action == hide) btn.innerText = showStr; else btn.innerText = hideStr
-            });
+            Array.from(document.getElementsByClassName("charts")).forEach(c =>  toggleChart(c.id.replace('chart', ''), action));
         }
     </script>
   </head>
