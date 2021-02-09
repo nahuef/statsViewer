@@ -30,11 +30,20 @@ func GetStatsPath() (path string, errStr string) {
 
 // SimplifyDate ...
 func SimplifyDate(d string) string {
+	sep := "/"
+	d = strings.ReplaceAll(d, ".", sep)
+	d = reorderDate(d, sep)
 	d = strings.ReplaceAll(d, "2018", "18")
 	d = strings.ReplaceAll(d, "2019", "19")
 	d = strings.ReplaceAll(d, "2020", "20")
-	d = strings.ReplaceAll(d, "2021.", "")
-	d = strings.ReplaceAll(d, ".", "/")
+	d = strings.ReplaceAll(d, "/2021", "")
 
 	return d
+}
+
+func reorderDate(d, sep string) string {
+	dateUnits := strings.Split(d, sep)
+	dateUnits[0], dateUnits[1], dateUnits[2] = dateUnits[1], dateUnits[2], dateUnits[0]
+
+	return strings.Join(dateUnits, sep)
 }
