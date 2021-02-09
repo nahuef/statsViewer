@@ -6,12 +6,23 @@
     <script>
         const hide = "none";
         const show = "block";
-        const showStr = "Show chart"
-        const hideStr = "Hide chart"
+        const showStr = "Show chart";
+        const hideStr = "Hide chart";
+        const noChartStr = "No chart, less than 2 datapoints or 3 challenges.";
 
         function toggleChart(name, action) {
             const c = document.getElementById("chart"+name);
             const btn = document.getElementById("btn"+name);
+
+            // If no chart
+            if (!c.children.length) {
+                const scenario = document.getElementById("name"+name);
+                scenario.title = noChartStr;
+                c.style.display = hide;
+                btn.style.display = hide;
+                return
+            }
+
             if (action && action === hide || !action && c.style.display === show) {
                 c.style.display = hide;
                 btn.innerText = showStr;
@@ -24,6 +35,7 @@
         function toggleAll(action) {
             Array.from(document.getElementsByClassName("charts")).forEach(c =>  toggleChart(c.id.replace('chart', ''), action));
         }
+
     </script>
   </head>
 
@@ -49,10 +61,10 @@
 
       <div>
         {{range .SortedTimesPlayed}}
-            <li class="list-group-item"><h5>{{.Name}}: {{.TimesPlayed}}</h5>
-                <button class="btn btn-sm btn-outline-secondary shadow-none" id="btn{{.Name}}" onclick="toggleChart('{{.Name}}')">Show chart</button>
-                <div class="charts" id="chart{{.Name}}">{{.ChartByDate}}</div>
-                <script>toggleChart('{{.Name}}', hide)</script> <!-- Autohide chart on load -->
+            <li id="name{{.Name}}" class="list-group-item"><h5>{{.Name}}: {{.TimesPlayed}}</h5>
+                <button id="btn{{.Name}}" class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleChart('{{.Name}}')">Show chart</button>
+                <div id="chart{{.Name}}" class="charts">{{.ChartByDate}}</div>
+                <script>toggleChart('{{.Name}}', hide)</script> <!-- Autohide chart & button(if no chart) on load -->
             </li>
         {{end}}
       </div>
