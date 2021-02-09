@@ -46,7 +46,8 @@ type Scenario struct {
 	Lowscore    float64
 	LowestAvg   float64
 	ByDateMax   []map[string]Challenge
-	ByDateAvg   []map[string]float64
+	// ByDateAvg []interface{}: [0]float64 score, [1]int # of grouped challenges
+	ByDateAvg   []map[string][]interface{}
 	ChartByDate template.HTML
 }
 
@@ -86,9 +87,10 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, wg *sync.Wai
 	}
 	scen.LowestAvg = scen.Highscore
 	for k, v := range avg {
-		scen.ByDateAvg = append(scen.ByDateAvg, map[string]float64{k: v})
-		if v < scen.LowestAvg {
-			scen.LowestAvg = v
+		scen.ByDateAvg = append(scen.ByDateAvg, map[string][]interface{}{k: v})
+		score := v[0].(float64)
+		if score < scen.LowestAvg {
+			scen.LowestAvg = score
 		}
 	}
 
