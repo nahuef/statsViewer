@@ -47,3 +47,14 @@ func reorderDate(d, sep string) string {
 
 	return strings.Join(dateUnits, sep)
 }
+
+// ContainsString checks if the slice has the contains value in it.
+// Source: https://github.com/stretchr/stew/blob/master/slice/contains.go
+func ContainsString(slice []string, contains string) bool {
+	for _, value := range slice {
+		if value == contains {
+			return true
+		}
+	}
+	return false
+}

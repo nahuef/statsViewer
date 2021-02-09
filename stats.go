@@ -55,11 +55,13 @@ type Scenario struct {
 type Stats struct {
 	Scenarios         map[string]*Scenario
 	SortedTimesPlayed []*Scenario
+	UniqueDays        []string
+	DaysPlayed        int
 	TotalScens        int
 	TotalPlayed       int
 }
 
-func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, wg *sync.WaitGroup, mux *sync.Mutex) {
+func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *[]string, wg *sync.WaitGroup, mux *sync.Mutex) {
 	defer wg.Done()
 
 	scen.Lowscore = scen.Challenges[0].Score
@@ -120,7 +122,14 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, wg *sync.Wai
 
 	mux.Lock()
 	defer mux.Unlock()
+	for k := range ByDate {
+		if !ContainsString(*uniqueDays, k) {
+			*uniqueDays = append(*uniqueDays, k)
+		}
+	}
 	*sortedTimesPlayed = append(*sortedTimesPlayed, scen)
+
+	// Less than 2 datapoints or 3 challenges => skip chart
 	if scen.TimesPlayed <= 2 || len(ByDate) <= 1 {
 		return
 	}
@@ -128,20 +137,14 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, wg *sync.Wai
 }
 
 func (s *Stats) forEachScenario() {
-	var sortedTimesPlayed []*Scenario
-
 	mux := &sync.Mutex{}
 	var wg sync.WaitGroup
 	for _, scen := range s.Scenarios {
 		wg.Add(1)
-		go scenarioWorker(scen, &sortedTimesPlayed, &wg, mux)
+		go scenarioWorker(scen, &s.SortedTimesPlayed, &s.UniqueDays, &wg, mux)
 	}
 	wg.Wait()
 
-	s.SortedTimesPlayed = sortedTimesPlayed
-	sort.SliceStable(sortedTimesPlayed, func(i, j int) bool {
-		return sortedTimesPlayed[i].TimesPlayed > sortedTimesPlayed[j].TimesPlayed
-	})
 }
 
 func fileWorker(stats *Stats, file os.FileInfo, wg *sync.WaitGroup, mux *sync.Mutex, bar *uiprogress.Bar) {
@@ -209,5 +212,10 @@ func ParseStats(files []os.FileInfo) Stats {
 	uiprogress.Stop()
 
 	stats.forEachScenario()
+	stats.DaysPlayed = len(stats.UniqueDays)
+	sort.SliceStable(stats.SortedTimesPlayed, func(i, j int) bool {
+		return stats.SortedTimesPlayed[i].TimesPlayed > stats.SortedTimesPlayed[j].TimesPlayed
+	})
+
 	return stats
 }

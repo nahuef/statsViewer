@@ -1,73 +1,53 @@
 <html>
   <head>
     <title>Stats Viewer</title>
+    <script src="static/statsViewer.js"></script>
     <link rel="stylesheet" href="static/bootstrap.min.css">
     <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts.min.js"></script>
-    <script>
-        const hide = "none";
-        const show = "block";
-        const showStr = "Show chart";
-        const hideStr = "Hide chart";
-        const noChartStr = "No chart, less than 2 datapoints or 3 challenges.";
-
-        function toggleChart(name, action) {
-            const c = document.getElementById("chart"+name);
-            const btn = document.getElementById("btn"+name);
-
-            // If no chart
-            if (!c.children.length) {
-                const scenario = document.getElementById("name"+name);
-                scenario.title = noChartStr;
-                c.style.display = hide;
-                btn.style.display = hide;
-                return
-            }
-
-            if (action && action === hide || !action && c.style.display === show) {
-                c.style.display = hide;
-                btn.innerText = showStr;
-            } else {
-                c.style.display = show;
-                btn.innerText = hideStr;
-            }
-        }
-
-        function toggleAll(action) {
-            Array.from(document.getElementsByClassName("charts")).forEach(c =>  toggleChart(c.id.replace('chart', ''), action));
-        }
-
-    </script>
   </head>
 
   <body>
-    <div class="container">
+    <div class="container" style="text-align:center;">
       <div class="page-header">
-        <h1>Your most played scenarios</h1>
+        <h1 class="display-1">Stats Viewer</h1>
       </div>
 
       <div class="title">
-        <h5>Total scenarios: {{.TotalScens}}</h5>
-        <h5>Total challenges: {{.TotalPlayed}}</h5>
-
-        <br>
-        [Scenario]: [Challenges played]
+        <h6>Days played: <small class="text-muted">{{.DaysPlayed}}</small></h6>
+        <h6>Total scenarios: <small class="text-muted">{{.TotalScens}}</small></h6>
+        <h6>Total challenges: <small class="text-muted">{{.TotalPlayed}}</small></h6>
         <br>
 
+        <h3 class="display-6">Your most played scenarios</h3>
+        <br>
+
+        <h5>[Scenario]: <small class="text-muted">[Challenges played]</small></h5>
         <div class="btn-group btn-group-sm" role="group" aria-label="Show and hide buttons">
             <button class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleAll(show)">Show charts</button>
             <button class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleAll(hide)">Hide charts</button>
         </div>
+        <br>
       </div>
 
       <div>
+        <br>
         {{range .SortedTimesPlayed}}
-            <li id="name{{.Name}}" class="list-group-item"><h5>{{.Name}}: {{.TimesPlayed}}</h5>
+            <li id="name{{.Name}}" class="list-group-item"><h5>{{.Name}}: <small class="text-muted">{{.TimesPlayed}}</small></h5>
                 <button id="btn{{.Name}}" class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleChart('{{.Name}}')">Show chart</button>
                 <div id="chart{{.Name}}" class="charts">{{.ChartByDate}}</div>
                 <script>toggleChart('{{.Name}}', hide)</script> <!-- Autohide chart & button(if no chart) on load -->
             </li>
         {{end}}
       </div>
+      <br>
+    </div>
+
+    <div>
+         <p style="font-family:'Courier New', Courier, monospace; text-align:center;" class="text-muted"><small>
+            <a href="https://github.com/nahuef/statsViewer" style="color:#8c959e;">Source code</a> | <a href="https://github.com/nahuef/statsViewer/issues/new" style="color:#8c959e;">Open an issue</a>
+            <br>
+            by Malhumoradour.
+         </small></p>
     </div>
   </body>
 </html>
