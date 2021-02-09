@@ -1,27 +1,34 @@
 <html>
   <head>
-    <title>Kovaak Stats Viewer</title>
+    <title>Stats Viewer</title>
     <link rel="stylesheet" href="static/bootstrap.min.css">
+    <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts.min.js"></script>
     <script>
-        function toggleChart(id) {
-            const chart = document.getElementById("chart"+id);
-            const btn = document.getElementById("btn"+id);
-            if (chart.style.display === "none") {
-                chart.style.display = "block";
-                btn.innerText = "Hide chart";
+        const hide = "none";
+        const show = "block";
+        const showStr = "Show chart"
+        const hideStr = "Hide chart"
+
+        function toggleChart(name, action) {
+            const c = document.getElementById("chart"+name);
+            const btn = document.getElementById("btn"+name);
+
+            if (action === hide || c.style.display === show) {
+                c.style.display = hide;
+                btn.innerText = showStr;
             } else {
-                chart.style.display = "none";
-                btn.innerText = "Show chart";
+                c.style.display = show;
+                btn.innerText = hideStr;
             }
         }
-        function toggleAll() {
+
+        function toggleAll(action) {
             const charts = document.getElementsByClassName("charts")
             Array.from(charts).forEach(c => {
-                if (c.style.display === "none") {
-                    c.style.display = "block";
-                } else {
-                    c.style.display = "none";
-                }
+                const btn = document.getElementById("btn"+c.id.replace('chart', ''));
+
+                c.style.display = action
+                if (action == hide) btn.innerText = showStr; else btn.innerText = hideStr
             });
         }
     </script>
@@ -36,17 +43,23 @@
       <div class="title">
         <h5>Total scenarios: {{.TotalScens}}</h5>
         <h5>Total challenges: {{.TotalPlayed}}</h5>
+
         <br>
         [Scenario]: [Challenges played]
         <br>
-        <button class="btn" onclick="toggleAll()">Show/hide charts</button>
+
+        <div class="btn-group btn-group-sm" role="group" aria-label="Show and hide buttons">
+            <button class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleAll(show)">Show charts</button>
+            <button class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleAll(hide)">Hide charts</button>
+        </div>
       </div>
 
       <div>
         {{range .SortedTimesPlayed}}
             <li class="list-group-item"><h5>{{.Name}}: {{.TimesPlayed}}</h5>
-                <button class="btn" id="btn{{.Name}}" onclick="toggleChart('{{.Name}}')">Show chart</button>
+                <button class="btn btn-sm btn-outline-secondary shadow-none" id="btn{{.Name}}" onclick="toggleChart('{{.Name}}')">Show chart</button>
                 <div class="charts" id="chart{{.Name}}">{{.ChartByDate}}</div>
+                <script>toggleChart('{{.Name}}', hide)</script> <!-- Autohide chart on load -->
             </li>
         {{end}}
       </div>

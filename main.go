@@ -2,31 +2,35 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"text/template"
+	"time"
 )
 
-var statsViewer = "statsViewer"
+var statsViewer = "StatsViewer"
 var statsViewerHTML = statsViewer + ".html"
 var defaultPath = "./stats"
 
 // StatsPath ...
-var StatsPath, statsNotFound = getStatsPath()
+var StatsPath, statsNotFound = GetStatsPath()
 
 func main() {
+	start := time.Now()
+
 	files, err := ioutil.ReadDir(StatsPath)
 	if err != nil {
-		log.Println(statsNotFound + " \"stats\" folder not found. \n Press \"enter\" key to exit.")
+		log.Println(statsNotFound + " \"stats\" folder not found.\nPress \"enter\" key to exit.")
 		bufio.NewReader(os.Stdin).ReadBytes('\n')
 		os.Exit(1)
 	}
+	fmt.Println("\"stats\" folder found!\nParsing files... \nThis may take a few minutes!")
 
 	stats := ParseStats(files)
+	fmt.Println("Files parsed. \nCreating HTML file...")
 
 	// Output HTML
 	t, err := template.ParseFiles("templates/" + statsViewerHTML)
@@ -53,25 +57,7 @@ func main() {
 
 	fmt.Println("Success!")
 	exec.Command("cmd", "/C", "start", statsViewerHTML).Run()
-}
 
-func getStatsPath() (path string, errStr string) {
-	config, err := ioutil.ReadFile("./config.json")
-	if err != nil {
-		errStr += "No config.json file found."
-	} else {
-		var parsedConfig map[string]interface{}
-		err = json.Unmarshal(config, &parsedConfig)
-		if err != nil {
-			errStr = "Error reading config.json."
-		} else {
-			path = parsedConfig["stats_path"].(string) + "\\"
-		}
-	}
-
-	if path == "" {
-		path = defaultPath
-	}
-
-	return path, errStr
+	time2 := time.Now()
+	fmt.Println(time2.Sub(start))
 }

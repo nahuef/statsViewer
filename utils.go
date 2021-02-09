@@ -1,6 +1,32 @@
 package main
 
-import "strings"
+import (
+	"encoding/json"
+	"io/ioutil"
+	"strings"
+)
+
+// GetStatsPath ...
+func GetStatsPath() (path string, errStr string) {
+	config, err := ioutil.ReadFile("./config.json")
+	if err != nil {
+		errStr += "No config.json file found."
+	} else {
+		var parsedConfig map[string]interface{}
+		err = json.Unmarshal(config, &parsedConfig)
+		if err != nil {
+			errStr = "Error reading config.json."
+		} else {
+			path = parsedConfig["stats_path"].(string) + "\\"
+		}
+	}
+
+	if path == "" {
+		path = defaultPath
+	}
+
+	return path, errStr
+}
 
 // SimplifyDate ...
 func SimplifyDate(d string) string {

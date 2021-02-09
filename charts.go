@@ -35,7 +35,7 @@ func AddLineChart(scen *Scenario) {
 		for date, score := range dateScore {
 			avgDates = append(avgDates, SimplifyDate(date))
 			avgScores = append(avgScores, opts.LineData{
-				Name:  fmt.Sprintf("%v: %v. ", SimplifyDate(date), score),
+				Name:  fmt.Sprintf("%v: %v", SimplifyDate(date), score),
 				Value: score,
 			})
 		}

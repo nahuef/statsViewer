@@ -8,6 +8,9 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
+
+	"github.com/gosuri/uiprogress"
 )
 
 var extractor = Extract{}
@@ -55,76 +58,131 @@ type Stats struct {
 	TotalPlayed       int
 }
 
+func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, wg *sync.WaitGroup, mux *sync.Mutex) {
+	defer wg.Done()
+
+	scen.Lowscore = scen.Challenges[0].Score
+	ByDate := map[string][]Challenge{}
+
+	for _, chall := range scen.Challenges {
+		if chall.Score > scen.Highscore {
+			scen.Highscore = chall.Score
+		}
+		if chall.Score < scen.Lowscore {
+			scen.Lowscore = chall.Score
+		}
+
+		ByDate[chall.Date] = append(ByDate[chall.Date], chall)
+	}
+
+	// Group challenges per date
+	// max: a key per date containing one challenge
+	// avg: a key per date containing a slice with average score and number of grouped challenges
+	max, avg := Group(ByDate)
+
+	// maps into a slice so we can sort them by date
+	for k, v := range max {
+		scen.ByDateMax = append(scen.ByDateMax, map[string]Challenge{k: v})
+	}
+	scen.LowestAvg = scen.Highscore
+	for k, v := range avg {
+		scen.ByDateAvg = append(scen.ByDateAvg, map[string]float64{k: v})
+		if v < scen.LowestAvg {
+			scen.LowestAvg = v
+		}
+	}
+
+	// Actually sort them by date (descending)
+	sort.SliceStable(scen.ByDateMax, func(i, j int) bool {
+		var iDate int
+		for k := range scen.ByDateMax[i] {
+			iDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+		}
+		var jDate int
+		for k := range scen.ByDateMax[j] {
+			jDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+		}
+		return iDate < jDate
+	})
+	sort.SliceStable(scen.ByDateAvg, func(i, j int) bool {
+		var iDate int
+		for k := range scen.ByDateAvg[i] {
+			iDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+		}
+		var jDate int
+		for k := range scen.ByDateAvg[j] {
+			jDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+		}
+		return iDate < jDate
+	})
+
+	mux.Lock()
+	defer mux.Unlock()
+	*sortedTimesPlayed = append(*sortedTimesPlayed, scen)
+	if scen.TimesPlayed <= 2 || len(ByDate) <= 1 {
+		return
+	}
+	AddLineChart(scen)
+}
+
 func (s *Stats) forEachScenario() {
 	var sortedTimesPlayed []*Scenario
 
+	mux := &sync.Mutex{}
+	var wg sync.WaitGroup
 	for _, scen := range s.Scenarios {
-		sortedTimesPlayed = append(sortedTimesPlayed, scen)
-		sort.SliceStable(sortedTimesPlayed, func(i, j int) bool {
-			return sortedTimesPlayed[i].TimesPlayed > sortedTimesPlayed[j].TimesPlayed
-		})
-
-		scen.Lowscore = scen.Challenges[0].Score
-
-		ByDate := map[string][]Challenge{}
-		for _, chall := range scen.Challenges {
-			ByDate[chall.Date] = append(ByDate[chall.Date], chall)
-			if chall.Score > scen.Highscore {
-				scen.Highscore = chall.Score
-			}
-			if chall.Score < scen.Lowscore {
-				scen.Lowscore = chall.Score
-			}
-		}
-
-		max, avg := Group(ByDate)
-
-		for k, v := range max {
-			scen.ByDateMax = append(scen.ByDateMax, map[string]Challenge{k: v})
-		}
-
-		sort.SliceStable(scen.ByDateMax, func(i, j int) bool {
-			var iDate int
-			for k := range scen.ByDateMax[i] {
-				iDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
-			}
-			var jDate int
-			for k := range scen.ByDateMax[j] {
-				jDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
-			}
-
-			return iDate < jDate
-		})
-
-		scen.LowestAvg = scen.Highscore
-		for k, v := range avg {
-			scen.ByDateAvg = append(scen.ByDateAvg, map[string]float64{k: v})
-			if v < scen.LowestAvg {
-				scen.LowestAvg = v
-			}
-		}
-
-		sort.SliceStable(scen.ByDateAvg, func(i, j int) bool {
-			var iDate int
-			for k := range scen.ByDateAvg[i] {
-				iDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
-			}
-			var jDate int
-			for k := range scen.ByDateAvg[j] {
-				jDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
-			}
-
-			return iDate < jDate
-		})
-
-		if scen.TimesPlayed <= 2 || len(ByDate) <= 1 {
-			continue
-		}
-
-		AddLineChart(scen)
+		wg.Add(1)
+		go scenarioWorker(scen, &sortedTimesPlayed, &wg, mux)
 	}
+	wg.Wait()
 
 	s.SortedTimesPlayed = sortedTimesPlayed
+	sort.SliceStable(sortedTimesPlayed, func(i, j int) bool {
+		return sortedTimesPlayed[i].TimesPlayed > sortedTimesPlayed[j].TimesPlayed
+	})
+}
+
+func fileWorker(stats *Stats, file os.FileInfo, wg *sync.WaitGroup, mux *sync.Mutex, bar *uiprogress.Bar) {
+	defer wg.Done()
+	if file.IsDir() == true {
+		return
+	}
+
+	// Open file
+	f, err := os.Open(StatsPath + file.Name())
+	Check(err)
+	defer f.Close()
+
+	// New challenge
+	challenge := Challenge{}
+
+	// Read line by line
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		line := s.Text()
+		err = s.Err()
+		Check(err)
+
+		extractor := Extract{line: line, fileName: file.Name(), challenge: &challenge}
+		extractor.extractData()
+	}
+
+	mux.Lock()
+	stats.TotalPlayed++
+	if _, ok := stats.Scenarios[challenge.Name]; ok {
+		stats.Scenarios[challenge.Name].TimesPlayed++
+		stats.Scenarios[challenge.Name].Challenges = append(stats.Scenarios[challenge.Name].Challenges, challenge)
+	} else {
+		stats.TotalScens++
+		stats.Scenarios[challenge.Name] = &Scenario{
+			fileName:    file.Name(),
+			Name:        challenge.Name,
+			TimesPlayed: 1,
+			Challenges:  []Challenge{challenge},
+		}
+	}
+	mux.Unlock()
+	bar.Incr()
 }
 
 // ParseStats ...
@@ -133,44 +191,20 @@ func ParseStats(files []os.FileInfo) Stats {
 		Scenarios: map[string]*Scenario{},
 	}
 
+	bar := uiprogress.AddBar(len(files)).AppendCompleted().PrependElapsed()
+	bar.PrependFunc(func(b *uiprogress.Bar) string {
+		return fmt.Sprintf("Files (%d/%d)", b.Current(), len(files))
+	})
+	uiprogress.Start()
+
+	mux := &sync.Mutex{}
+	var wg sync.WaitGroup
 	for _, file := range files {
-		if file.IsDir() == true {
-			continue
-		}
-
-		// Open file
-		f, err := os.Open(StatsPath + file.Name())
-		Check(err)
-		defer f.Close()
-
-		// New challenge
-		challenge := Challenge{}
-
-		// Read line by line
-		s := bufio.NewScanner(f)
-		for s.Scan() {
-			line := s.Text()
-			err = s.Err()
-			Check(err)
-
-			extractor := Extract{line: line, fileName: file.Name(), challenge: &challenge}
-			extractor.extractData()
-		}
-
-		stats.TotalPlayed++
-		if _, ok := stats.Scenarios[challenge.Name]; ok {
-			stats.Scenarios[challenge.Name].TimesPlayed++
-			stats.Scenarios[challenge.Name].Challenges = append(stats.Scenarios[challenge.Name].Challenges, challenge)
-		} else {
-			stats.TotalScens++
-			stats.Scenarios[challenge.Name] = &Scenario{
-				fileName:    file.Name(),
-				Name:        challenge.Name,
-				TimesPlayed: 1,
-				Challenges:  []Challenge{challenge},
-			}
-		}
+		wg.Add(1)
+		go fileWorker(&stats, file, &wg, mux, bar)
 	}
+	wg.Wait()
+	uiprogress.Stop()
 
 	stats.forEachScenario()
 	return stats

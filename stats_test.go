@@ -11,8 +11,8 @@ import (
 
 var testScenName = "TEST Thin Gauntlet"
 var date = "2020.11.13"
-var time = "22.08.18"
-var datetime = fmt.Sprintf("%s-%s", date, time)
+var timeScen = "22.08.18"
+var datetime = fmt.Sprintf("%s-%s", date, timeScen)
 var testFileName = fmt.Sprintf("%s - Challenge - %s Stats.csv", testScenName, datetime)
 var testFilePath = StatsPath + testFileName
 
