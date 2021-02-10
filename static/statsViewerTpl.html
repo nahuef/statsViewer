@@ -1,4 +1,4 @@
-<html>
+<!DOCTYPE html>
   <head>
     <title>Stats Viewer</title>
     <script src="static/statsViewer.js"></script>
@@ -28,16 +28,14 @@
         <br>
       </div>
 
-      <div>
-        <br>
-        {{range .SortedTimesPlayed}}
-            <li id="name{{.Name}}" class="list-group-item"><h5>{{.Name}}: <small class="text-muted">{{.TimesPlayed}}</small></h5>
-                <button id="btn{{.Name}}" class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleChart('{{.Name}}')">Show chart</button>
-                <div id="chart{{.Name}}" class="charts">{{.ChartByDate}}</div>
-                <script>toggleChart('{{.Name}}', hide)</script> <!-- Autohide chart & button(if no chart) on load -->
-            </li>
-        {{end}}
-      </div>
+      <br>
+      {{range .SortedTimesPlayed}}
+          <li id="name{{.Name}}" class="list-group-item"><h5>{{.Name}}: <small class="text-muted">{{.TimesPlayed}}</small></h5>
+              <button id="btn{{.Name}}" class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleChart('{{.Name}}')">Show chart</button>
+              <div id="chart{{.Name}}" class="charts">{{.ChartByDate}}</div>
+              <script>toggleChart('{{.Name}}', hide)</script> <!-- Autohide chart & button(if no chart) on load -->
+          </li>
+      {{end}}
       <br>
     </div>
 

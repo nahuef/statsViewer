@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+  <head>
+    <title>Stats Viewer</title>
+    <script src="../static/statsViewer.js"></script>
+    <link rel="stylesheet" href="../static/bootstrap.min.css">
+    <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts.min.js"></script>
+  </head>
+
+  <body>
+    <div class="container" style="text-align:center;">
+      <div class="page-header">
+        <h1 class="display-1">Stats Viewer</h1>
+      </div>
+
+      <div class="title">
+        <h6>Days played: <small class="text-muted">61</small></h6>
+        <h6>Total scenarios: <small class="text-muted">299</small></h6>
+        <h6>Total challenges: <small class="text-muted">2084</small></h6>
+        <br>
+
+        <h3 class="display-6">Your most played scenarios</h3>
+        <br>
+
+        <div class="btn-group btn-group-sm" role="group" aria-label="Show and hide buttons">
+            <button class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleAll(show)">Show charts</button>
+            <button class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleAll(hide)">Hide charts</button>
+        </div>
+        <br>
+      </div>
+
+        <br>
+        <li id="name1wall5targets_pasu slow" class="list-group-item"><h5>1wall5targets_pasu slow: <small class="text-muted">56</small></h5>
+            <button id="btn1wall5targets_pasu slow" class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleChart('1wall5targets_pasu slow')">Show chart</button>
+            <div id="chart1wall5targets_pasu slow" class="charts">
+            <div class="container">
+                <div class="item" id="eElOmHOxyBFZ" style="width:100%;height:500px;"></div>
+            </div>
+
+            <script type="text/javascript">
+                "use strict";
+                let goecharts_eElOmHOxyBFZ = echarts.init(document.getElementById('eElOmHOxyBFZ'), "white");
+                let option_eElOmHOxyBFZ = {"color":["#c23531","#2f4554","#61a0a8","#d48265","#91c7ae","#749f83","#ca8622","#bda29a","#6e7074","#546570"],"legend":{"show":true},"series":[{"name":"Max scores","type":"line","waveAnimation":false,"data":[{"name":"09/10/20: 116. FOV: 103. Sens: 0.3 Valorant","value":116,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/11/20: 115. FOV: 103. Sens: 0.3 Valorant","value":115,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/13/20: 108. FOV: 103. Sens: 0.3 Valorant","value":108,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/16/20: 111. FOV: 103. Sens: 0.3 Valorant","value":111,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/17/20: 117. FOV: 103. Sens: 0.3 Valorant","value":117,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/19/20: 120. FOV: 103. Sens: 0.3 Valorant","value":120,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/21/20: 131. FOV: 103. Sens: 0.3 Valorant","value":131,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/22/20: 126. FOV: 103. Sens: 0.3 Valorant","value":126,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/23/20: 126. FOV: 103. Sens: 0.3 Valorant","value":126,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/27/20: 127. FOV: 103. Sens: 0.3 Valorant","value":127,"XAxisIndex":0,"YAxisIndex":0},{"name":"10/03/20: 118. FOV: 103. Sens: 0.3 Valorant","value":118,"XAxisIndex":0,"YAxisIndex":0},{"name":"01/05: 126. FOV: 103. Sens: 0.4 Valorant","value":126,"XAxisIndex":0,"YAxisIndex":0}],"label":{"show":true,"color":"black"}},{"name":"Average scores","type":"line","waveAnimation":false,"data":[{"name":"09/10/20: 106.4. Grouped: 5","value":106.4,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/11/20: 107. Grouped: 5","value":107,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/13/20: 104.6. Grouped: 5","value":104.6,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/16/20: 104. Grouped: 5","value":104,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/17/20: 110.6. Grouped: 5","value":110.6,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/19/20: 112. Grouped: 5","value":112,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/21/20: 120. Grouped: 5","value":120,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/22/20: 116.6. Grouped: 5","value":116.6,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/23/20: 120.6. Grouped: 3","value":120.6,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/27/20: 121.2. Grouped: 5","value":121.2,"XAxisIndex":0,"YAxisIndex":0},{"name":"10/03/20: 114. Grouped: 5","value":114,"XAxisIndex":0,"YAxisIndex":0},{"name":"01/05: 118. Grouped: 3","value":118,"XAxisIndex":0,"YAxisIndex":0}],"label":{"show":true,"color":"black"}}],"title":{"text":"1wall5targets_pasu slow","subtext":"Grouped by day, 12 datapoints."},"toolbox":{"show":true,"feature":{"saveAsImage":{"show":true,"name":"1wall5targets_pasu slow","title":"Download"},"dataZoom":{"show":true,"title":{"back":"Restore","zoom":"Zoom"}}}},"tooltip":{"show":true,"trigger":"item","triggerOn":"mousemove|click","formatter":"{b}"},"xAxis":[{"data":["09/10/20","09/11/20","09/13/20","09/16/20","09/17/20","09/19/20","09/21/20","09/22/20","09/23/20","09/27/20","10/03/20","01/05"],"axisLabel":{"rotate":45}}],"yAxis":[{"type":"value","min":90,"max":140,"axisLabel":{}}]};
+                goecharts_eElOmHOxyBFZ.setOption(option_eElOmHOxyBFZ);
+            </script>
+            </div>
+            <script>toggleChart('1wall5targets_pasu slow', hide)</script> <!-- Autohide chart & button(if no chart) on load -->
+        </li>
+
+        <li id="name1w2t smallflicks small 60s " class="list-group-item"><h5>1w2t smallflicks small 60s : <small class="text-muted">48</small></h5>
+            <button id="btn1w2t smallflicks small 60s " class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleChart('1w2t smallflicks small 60s ')">Show chart</button>
+            <div id="chart1w2t smallflicks small 60s " class="charts">
+            <div class="container">
+                <div class="item" id="iAGMESnNvAOk" style="width:100%;height:500px;"></div>
+            </div>
+
+            <script type="text/javascript">
+                "use strict";
+                let goecharts_iAGMESnNvAOk = echarts.init(document.getElementById('iAGMESnNvAOk'), "white");
+                let option_iAGMESnNvAOk = {"color":["#c23531","#2f4554","#61a0a8","#d48265","#91c7ae","#749f83","#ca8622","#bda29a","#6e7074","#546570"],"legend":{"show":true},"series":[{"name":"Max scores","type":"line","waveAnimation":false,"data":[{"name":"09/14/20: 779.1. FOV: 103. Sens: 0.3 Valorant","value":779.1,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/15/20: 891.6. FOV: 103. Sens: 0.3 Valorant","value":891.6,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/16/20: 980.8. FOV: 103. Sens: 0.3 Valorant","value":980.8,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/17/20: 1010.8. FOV: 103. Sens: 0.3 Valorant","value":1010.8,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/19/20: 952.3. FOV: 103. Sens: 0.3 Valorant","value":952.3,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/21/20: 933.4. FOV: 103. Sens: 0.3 Valorant","value":933.4,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/22/20: 993.2. FOV: 103. Sens: 0.3 Valorant","value":993.2,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/23/20: 934.5. FOV: 103. Sens: 0.3 Valorant","value":934.5,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/27/20: 923.4. FOV: 103. Sens: 0.3 Valorant","value":923.4,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/29/20: 933.4. FOV: 103. Sens: 0.3 Valorant","value":933.4,"XAxisIndex":0,"YAxisIndex":0},{"name":"10/03/20: 913.4. FOV: 103. Sens: 0.3 Valorant","value":913.4,"XAxisIndex":0,"YAxisIndex":0}],"label":{"show":true,"color":"black"}},{"name":"Average scores","type":"line","waveAnimation":false,"data":[{"name":"09/14/20: 779.1. Grouped: 1","value":779.1,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/15/20: 842.5. Grouped: 4","value":842.5,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/16/20: 872.9. Grouped: 4","value":872.9,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/17/20: 946.7. Grouped: 4","value":946.7,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/19/20: 863.9. Grouped: 8","value":863.9,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/21/20: 885.8. Grouped: 7","value":885.8,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/22/20: 922.1. Grouped: 4","value":922.1,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/23/20: 859.4. Grouped: 4","value":859.4,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/27/20: 848.6. Grouped: 4","value":848.6,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/29/20: 867.2. Grouped: 4","value":867.2,"XAxisIndex":0,"YAxisIndex":0},{"name":"10/03/20: 864.4. Grouped: 4","value":864.4,"XAxisIndex":0,"YAxisIndex":0}],"label":{"show":true,"color":"black"}}],"title":{"text":"1w2t smallflicks small 60s ","subtext":"Grouped by day, 11 datapoints."},"toolbox":{"show":true,"feature":{"saveAsImage":{"show":true,"name":"1w2t smallflicks small 60s ","title":"Download"},"dataZoom":{"show":true,"title":{"back":"Restore","zoom":"Zoom"}}}},"tooltip":{"show":true,"trigger":"item","triggerOn":"mousemove|click","formatter":"{b}"},"xAxis":[{"data":["09/14/20","09/15/20","09/16/20","09/17/20","09/19/20","09/21/20","09/22/20","09/23/20","09/27/20","09/29/20","10/03/20"],"axisLabel":{"rotate":45}}],"yAxis":[{"type":"value","min":740,"max":1070,"axisLabel":{}}]};
+                goecharts_iAGMESnNvAOk.setOption(option_iAGMESnNvAOk);
+            </script>
+            </div>
+            <script>toggleChart('1w2t smallflicks small 60s ', hide)</script> <!-- Autohide chart & button(if no chart) on load -->
+        </li>
+
+        <li id="nameCata IC Long Strafes Invincible" class="list-group-item"><h5>Cata IC Long Strafes Invincible: <small class="text-muted">47</small></h5>
+            <button id="btnCata IC Long Strafes Invincible" class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleChart('Cata IC Long Strafes Invincible')">Show chart</button>
+            <div id="chartCata IC Long Strafes Invincible" class="charts">
+            <div class="container">
+                <div class="item" id="GmJyNhVrtCAt" style="width:100%;height:500px;"></div>
+            </div>
+
+            <script type="text/javascript">
+                "use strict";
+                let goecharts_GmJyNhVrtCAt = echarts.init(document.getElementById('GmJyNhVrtCAt'), "white");
+                let option_GmJyNhVrtCAt = {"color":["#c23531","#2f4554","#61a0a8","#d48265","#91c7ae","#749f83","#ca8622","#bda29a","#6e7074","#546570"],"legend":{"show":true},"series":[{"name":"Max scores","type":"line","waveAnimation":false,"data":[{"name":"09/14/20: 8118. FOV: 103. Sens: 0.3 Valorant","value":8118,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/15/20: 9954. FOV: 103. Sens: 0.3 Valorant","value":9954,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/16/20: 9486. FOV: 103. Sens: 0.3 Valorant","value":9486,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/17/20: 11052. FOV: 103. Sens: 0.3 Valorant","value":11052,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/19/20: 10242. FOV: 103. Sens: 0.3 Valorant","value":10242,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/21/20: 12186. FOV: 103. Sens: 0.3 Valorant","value":12186,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/22/20: 12546. FOV: 103. Sens: 0.3 Valorant","value":12546,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/23/20: 12726. FOV: 103. Sens: 0.3 Valorant","value":12726,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/24/20: 12618. FOV: 103. Sens: 0.3 Valorant","value":12618,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/27/20: 13572. FOV: 103. Sens: 0.3 Valorant","value":13572,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/28/20: 12888. FOV: 103. Sens: 0.3 Valorant","value":12888,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/29/20: 13950. FOV: 103. Sens: 0.3 Valorant","value":13950,"XAxisIndex":0,"YAxisIndex":0},{"name":"10/03/20: 12078. FOV: 103. Sens: 0.3 Valorant","value":12078,"XAxisIndex":0,"YAxisIndex":0}],"label":{"show":true,"color":"black"}},{"name":"Average scores","type":"line","waveAnimation":false,"data":[{"name":"09/14/20: 8118. Grouped: 1","value":8118,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/15/20: 9162. Grouped: 5","value":9162,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/16/20: 8914.5. Grouped: 4","value":8914.5,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/17/20: 10008. Grouped: 4","value":10008,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/19/20: 9913.5. Grouped: 4","value":9913.5,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/21/20: 10507.5. Grouped: 8","value":10507.5,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/22/20: 12108. Grouped: 3","value":12108,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/23/20: 12726. Grouped: 1","value":12726,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/24/20: 11034. Grouped: 4","value":11034,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/27/20: 12609. Grouped: 4","value":12609,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/28/20: 12888. Grouped: 1","value":12888,"XAxisIndex":0,"YAxisIndex":0},{"name":"09/29/20: 13081.5. Grouped: 4","value":13081.5,"XAxisIndex":0,"YAxisIndex":0},{"name":"10/03/20: 10975.5. Grouped: 4","value":10975.5,"XAxisIndex":0,"YAxisIndex":0}],"label":{"show":true,"color":"black"}}],"title":{"text":"Cata IC Long Strafes Invincible","subtext":"Grouped by day, 13 datapoints."},"toolbox":{"show":true,"feature":{"saveAsImage":{"show":true,"name":"Cata IC Long Strafes Invincible","title":"Download"},"dataZoom":{"show":true,"title":{"back":"Restore","zoom":"Zoom"}}}},"tooltip":{"show":true,"trigger":"item","triggerOn":"mousemove|click","formatter":"{b}"},"xAxis":[{"data":["09/14/20","09/15/20","09/16/20","09/17/20","09/19/20","09/21/20","09/22/20","09/23/20","09/24/20","09/27/20","09/28/20","09/29/20","10/03/20"],"axisLabel":{"rotate":45}}],"yAxis":[{"type":"value","min":7710,"max":14650,"axisLabel":{}}]};
+                goecharts_GmJyNhVrtCAt.setOption(option_GmJyNhVrtCAt);
+            </script>
+            </div>
+            <script>toggleChart('Cata IC Long Strafes Invincible', hide)</script> <!-- Autohide chart & button(if no chart) on load -->
+        </li>
+       <br>
+    </div>
+
+    <div>
+         <p style="font-family:'Courier New', Courier, monospace; text-align:center;" class="text-muted"><small>
+            <a href="https://github.com/nahuef/statsViewer" style="color:#8c959e;">Source code</a> | <a href="https://github.com/nahuef/statsViewer/issues/new" style="color:#8c959e;">Open an issue</a>
+            <br>
+            by Malhumoradour.
+         </small></p>
+    </div>
+  </body>
+</html>
