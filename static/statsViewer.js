@@ -2,7 +2,7 @@ const hide = "none";
 const show = "block";
 const showStr = "Show chart";
 const hideStr = "Hide chart";
-const noChartStr = "No chart, less than 2 datapoints or 3 challenges.";
+const noChartStr = "No chart. Scenario has less than 2 datapoints or 3 challenges.";
 
 function toggleChart(name, action) {
     const c = document.getElementById("chart"+name);

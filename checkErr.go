@@ -1,8 +1,11 @@
 package main
 
+import "log"
+
 // Check ...
 func Check(e error) {
 	if e != nil {
-		panic(e)
+		log.Println(e)
+		EnterToExit()
 	}
 }

@@ -1,13 +1,20 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"io/ioutil"
+	"log"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
+// DefaultPath is a "stats" folder at binary's directory.
+var DefaultPath = "./stats/"
+
 // GetStatsPath ...
-func GetStatsPath() (path string, errStr string) {
+func GetStatsPath() (statsPath string, errStr string) {
 	config, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		errStr += "No config.json file found."
@@ -15,17 +22,17 @@ func GetStatsPath() (path string, errStr string) {
 		var parsedConfig map[string]interface{}
 		err = json.Unmarshal(config, &parsedConfig)
 		if err != nil {
-			errStr = "Error reading config.json."
+			errStr = "Error reading config file. Make sure it is a valid JSON."
 		} else {
-			path = parsedConfig["stats_path"].(string) + "\\"
+			statsPath = filepath.Clean(parsedConfig["stats_path"].(string)) + "\\"
 		}
 	}
 
-	if path == "" {
-		path = defaultPath
+	if statsPath == "" {
+		statsPath = DefaultPath
 	}
 
-	return path, errStr
+	return statsPath, errStr
 }
 
 // SimplifyDate ...
@@ -57,4 +64,11 @@ func ContainsString(slice []string, contains string) bool {
 		}
 	}
 	return false
+}
+
+// EnterToExit ...
+func EnterToExit() {
+	log.Println("Press \"enter\" key to exit.")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
+	os.Exit(1)
 }

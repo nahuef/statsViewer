@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -13,7 +12,6 @@ import (
 
 var statsViewer = "StatsViewer"
 var statsViewerHTML = statsViewer + ".html"
-var defaultPath = "./stats"
 
 // StatsPath ...
 var StatsPath, statsNotFound = GetStatsPath()
@@ -23,9 +21,13 @@ func main() {
 
 	files, err := ioutil.ReadDir(StatsPath)
 	if err != nil {
-		log.Println(statsNotFound + " \"stats\" folder not found.\nPress \"enter\" key to exit.")
-		bufio.NewReader(os.Stdin).ReadBytes('\n')
-		os.Exit(1)
+		if StatsPath == DefaultPath {
+			cwd, err := os.Getwd()
+			Check(err)
+			StatsPath = "current working directory " + cwd
+		}
+		log.Printf("Error: %v\"stats\" folder not found, make sure path is right %v", statsNotFound, StatsPath)
+		EnterToExit()
 	}
 	fmt.Println("\"stats\" folder found!\nParsing files... \nThis may take a few minutes!")
 
@@ -33,7 +35,7 @@ func main() {
 	fmt.Println("Files parsed. \nCreating HTML file...")
 
 	// Output HTML
-	t, err := template.ParseFiles("templates/" + statsViewerHTML)
+	t, err := template.ParseFiles("static/statsViewerTpl.html")
 	Check(err)
 	f, err := os.Create(statsViewerHTML)
 	Check(err)
@@ -56,8 +58,6 @@ func main() {
 	}
 
 	fmt.Println("Success!")
+	fmt.Println(time.Now().Sub(start))
 	exec.Command("cmd", "/C", "start", statsViewerHTML).Run()
-
-	time2 := time.Now()
-	fmt.Println(time2.Sub(start))
 }

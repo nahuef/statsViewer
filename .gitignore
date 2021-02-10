@@ -1,5 +1,5 @@
 .vscode
-stats*
+stats
 main.exe
 statsViewer.exe
 statsViewer.html
