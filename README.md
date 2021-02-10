@@ -14,10 +14,9 @@
 - Quickly go to a specific scenario by using the browser's search function (`ctrl + f` default in most browsers).
 
 ## How does it work?
-The application will process the files in the `stats` folder to generate a list with a chart per scenario, and output `StatsViewer.html` file with the data in the same directory as the tool's executable `StatsViewer.exe`.
+The application will process the files in the `stats` folder to generate a list with a chart per scenario, and output `StatsViewer.html` file with the data in the same directory as the tool's executable `statsViewer.exe`.
 
 That also means that if you lost some of your stats files or your progress by switching PC's, uninstalling Kovaak's, reinstalling your operating system or by any other means, that data won't be available in the result.
-
 
 ## How to use
 1. Download and extract the latest release of the tool [here](https://github.com/nahuef/statsViewer/releases).
@@ -34,7 +33,7 @@ That also means that if you lost some of your stats files or your progress by sw
 
     3. Third option **for the lazy ones**. Copy the contents from `StatsViewer` folder (the one you extracted in step 1) and paste them in the same directory of your `stats` folder.
 
-        The executable `StatsViewer.exe` has to be in the same directory as the `stats` folder (not inside). Done.
+        The executable `statsViewer.exe` has to be in the same directory as the `stats` folder (not inside). Done.
 
         For example, if your `stats` path is
         ```
@@ -44,11 +43,11 @@ That also means that if you lost some of your stats files or your progress by sw
         ```
         C:\Steam\steamapps\common\FPSAimTrainer\FPSAimTrainer\
         ```
-3. Run the tool by executing or double clicking `StatsViewer.exe`.
+3. Run the tool by executing or double clicking `statsViewer.exe`.
 
 4. A terminal/console will open and if everything goes right you'll see a progress bar. Wait for a few seconds as it processes yor data.
 
-5. Once finished, that window will close itself and you should have a new file `StatsViewer.html` in the same directory as the executable `StatsViewer.exe`. Double click the `.html` file to open it in your default browser. **That's it, done!**
+5. Once finished, that window will close itself and you should have a new file `StatsViewer.html` in the same directory as the executable `statsViewer.exe`. Double click the `.html` file to open it in your default browser. **That's it, done!**
 
 
 ### How to find your `stats` folder
@@ -91,7 +90,6 @@ Suggestions and PR's welcome!
 
 
 ## Build it from source
-
 Go 1.15 required.
 
 ```bash
