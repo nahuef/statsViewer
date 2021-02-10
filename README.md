@@ -1,11 +1,11 @@
 <h1 align="center">Stats Viewer</h1>
 
 <p align="center">
-    <img width="80%" alt="Screenshot" src="docs/statsViewer.png">
+    <img width="100%" alt="Screenshot" src="docs/statsViewer.png">
 </p>
 
 ## The tool & why
-*Stats Viewer* is a tool to help you track performance and improvement over time by making a list **sorted by your most played scenarios** (so you can focus on the bigger picture) with *interactive charts* that shows your max and average scores for each scenario, grouped by day.
+*Stats Viewer* is a tool to help you track performance and improvement over time by making a list **sorted by your most played scenarios** (so you can focus on the bigger picture) with *interactive charts* that shows your max and average scores for each, grouped by day.
 
 - Using the toolbox in the top right of each chart you can **zoom in** or even **download them as an image** to share on social media.
 
@@ -14,15 +14,15 @@
 - Quickly go to a specific scenario by using the browser's search function (`ctrl + f` default in most browsers).
 
 ## How does it work?
-The application will process the files in the `stats` folder to generate the list with a chart per scenario, and output a `StatsViewer.html` file with the data in the same directory as the tool's executable `StatsViewer.exe`.
+The application will process the files in the `stats` folder to generate a list with a chart per scenario, and output `StatsViewer.html` file with the data in the same directory as the tool's executable `StatsViewer.exe`.
 
-That also means that if you lost some of your stats or your progress by switching PC's, uninstalling Kovaak's, reinstalling your operating system or by any other means, that data won't be available in the result.
+That also means that if you lost some of your stats files or your progress by switching PC's, uninstalling Kovaak's, reinstalling your operating system or by any other means, that data won't be available in the result.
 
 
 ## How to use
 1. Download and extract the latest release of the tool [here](https://github.com/nahuef/statsViewer/releases).
 2. Set the path to your Kovaak's `stats` folder. There are three **different options** for this step.
-    1. First option. If you are already using the [Progress Sheet Updater](https://github.com/VoltaicHQ/Progress-Sheet-Updater), you copy the `config.json` file from that tool and paste it inside `StatsViewer` folder (the one you extracted in step 1). Done.
+    1. First option. If you are already using the [Progress Sheet Updater](https://github.com/VoltaicHQ/Progress-Sheet-Updater),copy the `config.json` file from that tool and paste it inside `StatsViewer` folder (the one you extracted in step 1). Done.
 
     2. Second option. Inside `StatsViewer` folder (the one you extracted in step 1) create a file named `config.json` and paste the following snippet:
         ```
@@ -48,11 +48,11 @@ That also means that if you lost some of your stats or your progress by switchin
 
 4. A terminal/console will open and if everything goes right you'll see a progress bar. Wait for a few seconds as it processes yor data.
 
-5. Once it finishes, that window will close itself and you should have a new file `StatsViewer.html` in the same directory as the executable `StatsViewer.exe`. Double click the `.html` file to open it in your default browser. That's it, done!
+5. Once finished, that window will close itself and you should have a new file `StatsViewer.html` in the same directory as the executable `StatsViewer.exe`. Double click the `.html` file to open it in your default browser. **That's it, done!**
 
 
 ### How to find your `stats` folder
-(To complete the second option of "How to use")
+(To complete the second step and option of "How to use")
 1. Open your Steam application and go to Library -> Collections, find `Kovaak 2.0` in the list, right-click -> Manage -> Browse local files.
     <p align="center">
         <img alt="Screenshot" src="docs/browseLocalFiles.png">
@@ -63,7 +63,7 @@ That also means that if you lost some of your stats or your progress by switchin
         <img alt="Screenshot" src="docs/installationFolder.png">
     </p>
 
-3. Here we can see the `stats` folder, we are almost there! Double click on it to open it.
+3. Here we can see the `stats` folder, we are almost there! Open it.
     <p align="center">
         <img alt="Screenshot" src="docs/FPSAimTrainerDir.png">
     </p>
@@ -74,7 +74,7 @@ That also means that if you lost some of your stats or your progress by switchin
     </p>
 
 Once you paste that path in the `config.json` file, make sure you duplicate each `\`.
-For the screenshots shown the `config.json` file would look like this:
+For the screenshots shown above the `config.json` file would look like this:
 ```
 {
 	"stats_path": "E:\\GamesSSD\\SteamLibrary\\steamapps\\common\\FPSAimTrainer\\FPSAimTrainer\\stats"
@@ -85,9 +85,9 @@ For the screenshots shown the `config.json` file would look like this:
 ## Troubleshooting & support
 Tested on Windows 10.
 
-If you need help or encounter a bug, feel free to [open an issue](https://github.com/nahuef/statsViewer/issues/new) or contact me via Discord Malhumoradour#5542 and send me a screenshot of the error, if any.
+If you need help or encounter any bug, feel free to [open an issue](https://github.com/nahuef/statsViewer/issues/new) or contact me via Discord at Malhumoradour#5542 and send me a screenshot of the error, if any.
 
-Suggestions and PR's are welcome!
+Suggestions and PR's welcome!
 
 
 ## Build it from source
