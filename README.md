@@ -7,11 +7,18 @@
 ## The tool & why
 *Stats Viewer* is a tool to help you track performance and improvement over time by making a list **sorted by your most played scenarios** (so you can focus on the bigger picture) with *interactive charts* that shows your max and average scores for each, grouped by day.
 
-- Using the toolbox in the top right of each chart you can **zoom in** or even **download them as an image** to share on social media.
+- Using the toolbox in the top right of each chart you can **zoom in** and **download them as an image** to share on social media.
+
+- Hover over datapoints (the dots on the lines) to check the **FOV and sensibility you used to get highscores** and figure out what worked best for you in the past.
 
 - Toggle `max scores` and `average scores` lines by clicking on the legend at the top of the chart.
 
 - Quickly go to a specific scenario by using the browser's search function (`ctrl + f` default in most browsers).
+
+## Online sample
+Not hyped yet?!
+
+Check out [this sample](https://nahuef.github.io/statsViewer/) before you download and run the tool to see if it would add value to your training and performance tracking.
 
 ## How does it work?
 The application will process the files in the `stats` folder to generate a list with a chart per scenario, and output `StatsViewer.html` file with the data in the same directory as the tool's executable `statsViewer.exe`.
@@ -19,6 +26,9 @@ The application will process the files in the `stats` folder to generate a list 
 That also means that if you lost some of your stats files or your progress by switching PC's, uninstalling Kovaak's, reinstalling your operating system or by any other means, that data won't be available in the result.
 
 ## How to use
+*It's super simple, I just like to write a lot.*
+
+Basicaly you download the app, set the path to your `stats` folder (which is even optional, see third option on step 2) and run it.
 1. Download and extract the latest release of the tool [here](https://github.com/nahuef/statsViewer/releases).
 2. Set the path to your Kovaak's `stats` folder. There are three **different options** for this step.
     1. First option. If you are already using the [Progress Sheet Updater](https://github.com/VoltaicHQ/Progress-Sheet-Updater),copy the `config.json` file from that tool and paste it inside `StatsViewer` folder (the one you extracted in step 1). Done.
@@ -51,7 +61,7 @@ That also means that if you lost some of your stats files or your progress by sw
 
 
 ### How to find your `stats` folder
-(To complete the second step and option of "How to use")
+(To complete the second step and second option of "How to use")
 1. Open your Steam application and go to Library -> Collections, find `Kovaak 2.0` in the list, right-click -> Manage -> Browse local files.
     <p align="center">
         <img alt="Screenshot" src="docs/browseLocalFiles.png">
@@ -88,6 +98,10 @@ If you need help or encounter any bug, feel free to [open an issue](https://gith
 
 Suggestions and PR's welcome!
 
+## Disclaimer
+This is my first free open source side project and also my first time programming in Go.
+
+Shipping was prioritized over code quality so if you are a dev and want to check the code, I offer my sincere apology for what your eyes are about to see.
 
 ## Build it from source
 Go 1.15 required.
