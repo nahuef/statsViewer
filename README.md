@@ -5,7 +5,7 @@
 </p>
 
 ## The tool & why
-*Stats Viewer* is a tool to help you track performance and progress over time by making a list **sorted by your most played scenarios** (so you can focus on the bigger picture) with *interactive charts* that shows your max and average scores for each, grouped by day.
+*Stats Viewer* is a tool to help you track score progress and improvement over time by displaying a list **sorted by your most played scenarios** (so you can focus on the bigger picture) with *interactive charts* that shows your max and average scores for each, grouped by day.
 
 Originally, I just wanted to know which were the scenarios I had played the most so I could look for those charts directly, instead of clicking one by one on tons of scenarios I had only played once or twice. And then, the idea to have the charts on the page itself came to me and... voilá!
 
@@ -61,6 +61,7 @@ Basicaly you download the app, set the path to your `stats` folder (which is eve
 
 5. Once finished, that window will close itself and you should have a new file `StatsViewer.html` in the same directory as the executable `statsViewer.exe`. Double click the `.html` file to open it in your default browser. **That's it, done!**
 
+> *TIP: Run the tool everytime you want to update the charts*
 
 ### How to find your `stats` folder
 (To complete the second step and second option of "How to use")
