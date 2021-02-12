@@ -12,10 +12,12 @@ type Extract struct {
 	challenge *Challenge
 }
 
-func (e *Extract) extractData() {
+func (e *Extract) extractData() (err string) {
 	// Malformed file names will not panic whole process
 	defer func() {
-		recover()
+		if error := recover(); error != nil {
+			err = "Malformed file name"
+		}
 	}()
 
 	e.name()
@@ -25,6 +27,8 @@ func (e *Extract) extractData() {
 	e.vsens()
 	e.fov()
 	e.DateAndTime()
+
+	return err
 }
 
 func (e *Extract) name() {

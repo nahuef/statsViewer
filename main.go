@@ -17,6 +17,13 @@ var statsViewerHTML = statsViewer + ".html"
 var StatsPath, statsNotFound = GetStatsPath()
 
 func main() {
+	defer func() {
+		if error := recover(); error != nil {
+			fmt.Println("Error:", error)
+			EnterToExit()
+		}
+	}()
+
 	start := time.Now()
 
 	files, err := ioutil.ReadDir(StatsPath)

@@ -169,7 +169,10 @@ func fileWorker(stats *Stats, file os.FileInfo, wg *sync.WaitGroup, mux *sync.Mu
 		Check(err)
 
 		extractor := Extract{line: line, fileName: file.Name(), challenge: &challenge}
-		extractor.extractData()
+		err := extractor.extractData()
+		if err != "" {
+			return
+		}
 	}
 
 	mux.Lock()
