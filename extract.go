@@ -81,7 +81,7 @@ func (e *Extract) DateAndTime() {
 	datetime := strings.Split(datetimeAndExtension, " ")[0]
 	dateAndTime := strings.Split(datetime, "-")
 
-	e.challenge.Datetime = datetime
+	// e.challenge.Datetime = datetime
 	e.challenge.Date = dateAndTime[0]
-	e.challenge.Time = dateAndTime[1]
+	// e.challenge.Time = dateAndTime[1]
 }

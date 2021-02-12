@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"html/template"
 	"os"
 	"sort"
 	"strconv"
@@ -14,42 +13,6 @@ import (
 )
 
 var extractor = Extract{}
-
-// Challenge ...
-type Challenge struct {
-	Name      string
-	Datetime  string
-	Date      string
-	Time      string
-	Score     float64
-	SensScale string
-	HSens     float64
-	VSens     float64
-	FOV       float64
-}
-
-func (c *Challenge) sensStr() string {
-	if c.HSens == c.VSens {
-		return fmt.Sprintf("Sens: %v %v", c.HSens, c.SensScale)
-	}
-
-	return fmt.Sprintf("Vsens: %v, Hsens: %v %v", c.VSens, c.HSens, c.SensScale)
-}
-
-// Scenario ...
-type Scenario struct {
-	fileName    string
-	Name        string
-	TimesPlayed int
-	Challenges  []Challenge
-	Highscore   float64
-	Lowscore    float64
-	LowestAvg   float64
-	ByDateMax   []map[string]Challenge
-	// ByDateAvg []interface{}: [0]float64 score, [1]int # of grouped challenges
-	ByDateAvg   []map[string][]interface{}
-	ChartByDate template.HTML
-}
 
 // Stats ...
 type Stats struct {
@@ -83,7 +46,7 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 	// avg: a key per date containing a slice with average score and number of grouped challenges
 	max, avg := Group(ByDate)
 
-	// maps into a slice so we can sort them by date
+	// Maps into a slice so we can sort them by date
 	for k, v := range max {
 		scen.ByDateMax = append(scen.ByDateMax, map[string]Challenge{k: v})
 	}
@@ -144,7 +107,6 @@ func (s *Stats) forEachScenario() {
 		go scenarioWorker(scen, &s.SortedTimesPlayed, &s.UniqueDays, &wg, mux)
 	}
 	wg.Wait()
-
 }
 
 func fileWorker(stats *Stats, file os.FileInfo, wg *sync.WaitGroup, mux *sync.Mutex, bar *uiprogress.Bar) {
@@ -161,18 +123,19 @@ func fileWorker(stats *Stats, file os.FileInfo, wg *sync.WaitGroup, mux *sync.Mu
 	// New challenge
 	challenge := Challenge{}
 
-	// Read line by line
 	s := bufio.NewScanner(f)
+	// For each line
 	for s.Scan() {
 		line := s.Text()
 		err = s.Err()
 		Check(err)
 
 		extractor := Extract{line: line, fileName: file.Name(), challenge: &challenge}
-		err := extractor.extractData()
-		if err != "" {
-			return
-		}
+		extractor.extractData()
+	}
+
+	if valid := challenge.IsValid(); valid == false {
+		return
 	}
 
 	mux.Lock()

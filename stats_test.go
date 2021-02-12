@@ -67,10 +67,10 @@ func TestStatsParse(t *testing.T) {
 		TimesPlayed: 1,
 		Challenges: []Challenge{
 			{
-				Name:      testScenName,
-				Datetime:  "2020.11.13-22.08.18",
-				Date:      "2020.11.13",
-				Time:      "22.08.18",
+				Name: testScenName,
+				// Datetime:  "2020.11.13-22.08.18",
+				Date: "2020.11.13",
+				// Time:      "22.08.18",
 				Score:     915.9,
 				SensScale: "Valorant",
 				HSens:     0.3,
@@ -91,7 +91,7 @@ func TestExtractDate(t *testing.T) {
 	}
 	extractor.DateAndTime()
 
-	assert.Equal(t, challenge.Datetime, "2020.11.13-22.08.18", "Datetime should be equal")
+	// assert.Equal(t, challenge.Datetime, "2020.11.13-22.08.18", "Datetime should be equal")
 	assert.Equal(t, challenge.Date, "2020.11.13", "Date should be equal")
-	assert.Equal(t, challenge.Time, "22.08.18", "Time should be equal")
+	// assert.Equal(t, challenge.Time, "22.08.18", "Time should be equal")
 }

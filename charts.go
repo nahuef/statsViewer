@@ -23,7 +23,7 @@ func AddLineChart(scen *Scenario) {
 		for date, chall := range dateScore {
 			maxDates = append(maxDates, SimplifyDate(date))
 			maxScores = append(maxScores, opts.LineData{
-				Name:  fmt.Sprintf("%v: %v. FOV: %v. %v", SimplifyDate(date), chall.Score, chall.FOV, chall.sensStr()),
+				Name:  fmt.Sprintf("%v: %v. FOV: %v. %v", SimplifyDate(date), chall.Score, chall.FOV, chall.SensStr()),
 				Value: chall.Score,
 			})
 		}
