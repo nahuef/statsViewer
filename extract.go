@@ -13,6 +13,11 @@ type Extract struct {
 }
 
 func (e *Extract) extractData() {
+	// Malformed file names will not panic whole process
+	defer func() {
+		recover()
+	}()
+
 	e.name()
 	e.score()
 	e.sensScale()
