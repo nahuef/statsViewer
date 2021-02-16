@@ -1,9 +1,9 @@
 package main
 
 // Group ...
-func Group(challsByDate map[string][]Challenge) (map[string]Challenge, map[string][]interface{}) {
+func Group(challsByDate map[string][]Challenge) (map[string]Challenge, map[string]DateAvg) {
 	ByDateMax := map[string]Challenge{}
-	ByDateAvg := map[string][]interface{}{}
+	ByDateAvg := map[string]DateAvg{}
 
 	for date, challs := range challsByDate {
 		challsAmount := len(challs)
@@ -23,7 +23,10 @@ func Group(challsByDate map[string][]Challenge) (map[string]Challenge, map[strin
 		avgScore = sum / float64(challsAmount)
 
 		ByDateMax[date] = maxChall
-		ByDateAvg[date] = []interface{}{float64(int(avgScore*10)) / 10, challsAmount}
+		ByDateAvg[date] = DateAvg{
+			Score:   float64(int(avgScore*10)) / 10,
+			Grouped: challsAmount,
+		}
 	}
 
 	return ByDateMax, ByDateAvg

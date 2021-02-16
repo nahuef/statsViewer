@@ -42,20 +42,17 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 	}
 
 	// Group challenges per date
-	// max: a key per date containing one challenge
-	// avg: a key per date containing a slice with average score and number of grouped challenges
 	max, avg := Group(ByDate)
 
 	// Maps into a slice so we can sort them by date
-	for k, v := range max {
-		scen.ByDateMax = append(scen.ByDateMax, map[string]Challenge{k: v})
+	for date, challenge := range max {
+		scen.ByDateMax = append(scen.ByDateMax, map[string]Challenge{date: challenge})
 	}
 	scen.LowestAvg = scen.Highscore
-	for k, v := range avg {
-		scen.ByDateAvg = append(scen.ByDateAvg, map[string][]interface{}{k: v})
-		score := v[0].(float64)
-		if score < scen.LowestAvg {
-			scen.LowestAvg = score
+	for date, dateAvg := range avg {
+		scen.ByDateAvg = append(scen.ByDateAvg, map[string]DateAvg{date: dateAvg})
+		if dateAvg.Score < scen.LowestAvg {
+			scen.LowestAvg = dateAvg.Score
 		}
 	}
 
@@ -127,8 +124,7 @@ func fileWorker(stats *Stats, file os.FileInfo, wg *sync.WaitGroup, mux *sync.Mu
 	// For each line
 	for s.Scan() {
 		line := s.Text()
-		err = s.Err()
-		Check(err)
+		Check(s.Err())
 
 		extractor := Extract{line: line, fileName: file.Name(), challenge: &challenge}
 		extractor.extractData()
