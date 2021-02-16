@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"html/template"
 	"os"
 	"sort"
 	"strconv"
@@ -18,13 +19,21 @@ var extractor = Extract{}
 type Stats struct {
 	Scenarios         map[string]*Scenario
 	SortedTimesPlayed []*Scenario
-	UniqueDays        []string
+	UniqueDays        map[string]int
 	DaysPlayed        int
 	TotalScens        int
 	TotalPlayed       int
+	ProgressChart     template.HTML
 }
 
-func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *[]string, wg *sync.WaitGroup, mux *sync.Mutex) {
+func newStats() *Stats {
+	return &Stats{
+		Scenarios:  make(map[string]*Scenario),
+		UniqueDays: make(map[string]int),
+	}
+}
+
+func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *map[string]int, wg *sync.WaitGroup, mux *sync.Mutex) {
 	defer wg.Done()
 
 	scen.Lowscore = scen.Challenges[0].Score
@@ -42,14 +51,14 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 	}
 
 	// Group challenges per date
-	max, avg := Group(ByDate)
+	groupedMax, groupedAvg := Group(ByDate, scen.Highscore, scen.Name)
 
 	// Maps into a slice so we can sort them by date
-	for date, challenge := range max {
+	for date, challenge := range groupedMax {
 		scen.ByDateMax = append(scen.ByDateMax, map[string]Challenge{date: challenge})
 	}
 	scen.LowestAvgScore = scen.Highscore
-	for date, dateAvg := range avg {
+	for date, dateAvg := range groupedAvg {
 		scen.ByDateAvg = append(scen.ByDateAvg, map[string]DateAvg{date: dateAvg})
 		if dateAvg.Score < scen.LowestAvgScore {
 			scen.LowestAvgScore = dateAvg.Score
@@ -82,18 +91,12 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 
 	mux.Lock()
 	defer mux.Unlock()
-	for date := range ByDate {
-		if !ContainsString(*uniqueDays, date) {
-			*uniqueDays = append(*uniqueDays, date)
-		}
-	}
 	*sortedTimesPlayed = append(*sortedTimesPlayed, scen)
-
 	// Less than 2 datapoints or 3 challenges => skip chart
 	if scen.TimesPlayed <= 2 || len(ByDate) <= 1 {
 		return
 	}
-	AddLineChart(scen)
+	AddScenarioLineChart(scen)
 }
 
 func (s *Stats) forEachScenario() {
@@ -153,10 +156,8 @@ func fileWorker(stats *Stats, file os.FileInfo, wg *sync.WaitGroup, mux *sync.Mu
 }
 
 // ParseStats ...
-func ParseStats(files []os.FileInfo) Stats {
-	stats := Stats{
-		Scenarios: map[string]*Scenario{},
-	}
+func ParseStats(files []os.FileInfo) *Stats {
+	stats := newStats()
 
 	bar := uiprogress.AddBar(len(files)).AppendCompleted().PrependElapsed()
 	bar.PrependFunc(func(b *uiprogress.Bar) string {
@@ -168,16 +169,46 @@ func ParseStats(files []os.FileInfo) Stats {
 	var wg sync.WaitGroup
 	for _, file := range files {
 		wg.Add(1)
-		go fileWorker(&stats, file, &wg, mux, bar)
+		go fileWorker(stats, file, &wg, mux, bar)
 	}
 	wg.Wait()
 	uiprogress.Stop()
 
 	stats.forEachScenario()
+	percentagesToPBByDate(stats)
+	stats.ProgressChart = ProgressChart(&stats.UniqueDays)
 	stats.DaysPlayed = len(stats.UniqueDays)
 	sort.SliceStable(stats.SortedTimesPlayed, func(i, j int) bool {
 		return stats.SortedTimesPlayed[i].TimesPlayed > stats.SortedTimesPlayed[j].TimesPlayed
 	})
 
 	return stats
+}
+
+func percentagesToPBByDate(s *Stats) {
+	// Each date will have a list of scenario averages
+	dates := make(map[string][]int)
+
+	for _, scen := range s.Scenarios {
+		for _, dateAndDateAvg := range scen.ByDateAvg {
+			for date, DateAvg := range dateAndDateAvg {
+				dates[date] = append(dates[date], DateAvg.PercentagePB)
+			}
+		}
+	}
+
+	for date, percentages := range dates {
+		amount := len(percentages)
+		if amount <= 5 {
+			continue
+		}
+
+		var sum int
+		for _, v := range percentages {
+			sum += v
+		}
+		avgPercentage := sum / amount
+
+		s.UniqueDays[date] = avgPercentage
+	}
 }

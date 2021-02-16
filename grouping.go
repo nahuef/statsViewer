@@ -1,7 +1,7 @@
 package main
 
 // Group ...
-func Group(challsByDate map[string][]Challenge) (map[string]Challenge, map[string]DateAvg) {
+func Group(challsByDate map[string][]Challenge, scenHighscore float64, scenName string) (map[string]Challenge, map[string]DateAvg) {
 	ByDateMax := map[string]Challenge{}
 	ByDateAvg := map[string]DateAvg{}
 
@@ -24,8 +24,9 @@ func Group(challsByDate map[string][]Challenge) (map[string]Challenge, map[strin
 
 		ByDateMax[date] = maxChall
 		ByDateAvg[date] = DateAvg{
-			Score:   float64(int(avgScore*10)) / 10,
-			Grouped: challsAmount,
+			Score:        float64(int(avgScore*10)) / 10,
+			Grouped:      challsAmount,
+			PercentagePB: int((avgScore / scenHighscore) * 100),
 		}
 	}
 

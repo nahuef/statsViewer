@@ -2,13 +2,17 @@ package main
 
 import (
 	"fmt"
+	"html/template"
+	"sort"
+	"strconv"
+	"strings"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
-// AddLineChart ...
-func AddLineChart(scen *Scenario) {
+// AddScenarioLineChart ...
+func AddScenarioLineChart(scen *Scenario) {
 	lineMax := charts.NewLine()
 	lineMax.Renderer = newSnippetRenderer(lineMax, lineMax.Validate)
 	lineMax.SetGlobalOptions(chartGlobalOpts(max, scen.Name, len(scen.ByDateMax), scen.Highscore, scen.LowestAvgScore))
@@ -45,8 +49,68 @@ func AddLineChart(scen *Scenario) {
 		AddSeries("Max scores", maxScores).
 		AddSeries("Average scores", avgScores).
 		SetSeriesOptions(seriesOpts)
-	var htmlSnippet = renderToHTML(lineMax)
-	scen.ChartByDate = htmlSnippet
+
+	scen.ChartByDate = renderToHTML(lineMax)
+}
+
+// ProgressChart ...
+func ProgressChart(uniqueDays *map[string]int) template.HTML {
+	progress := charts.NewLine()
+	progress.Renderer = newSnippetRenderer(progress, progress.Validate)
+	progress.SetGlobalOptions(
+		charts.WithTitleOpts(opts.Title{
+			Title:    "Experimental performance tracker",
+			Subtitle: "Data points are average scores for every scenario played that day, converted into a percentage of its highscore.",
+		}),
+		charts.WithYAxisOpts(opts.YAxis{
+			Type:      "value",
+			Max:       100,
+			Min:       50,
+			AxisLabel: &yAxisLabelFormatter,
+		}),
+		toolBoxOpts("progress"),
+		tooltipOpts,
+		xAxisOpts,
+		initOpts,
+	)
+
+	// Order map by date
+	orderedDates := []map[string]int{}
+	for k, v := range *uniqueDays {
+		orderedDates = append(orderedDates, map[string]int{k: v})
+	}
+	sort.SliceStable(orderedDates, func(i, j int) bool {
+		var iDate int
+		for k := range orderedDates[i] {
+			iDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+		}
+		var jDate int
+		for k := range orderedDates[j] {
+			jDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+		}
+		return iDate < jDate
+	})
+
+	dates := []string{}
+	avgPercentagePBs := []opts.LineData{}
+	for _, dateAndAvgPercentagePB := range orderedDates {
+		for date, avgPercentagePB := range dateAndAvgPercentagePB {
+			if avgPercentagePB <= 0 {
+				continue
+			}
+			dates = append(dates, SimplifyDate(date))
+			avgPercentagePBs = append(avgPercentagePBs, opts.LineData{
+				Name:  SimplifyDate(date) + " " + strconv.Itoa(avgPercentagePB) + "%",
+				Value: avgPercentagePB,
+			})
+		}
+	}
+
+	progress.SetXAxis(dates).
+		AddSeries("PB %", avgPercentagePBs).
+		SetSeriesOptions(seriesOpts)
+
+	return renderToHTML(progress)
 }
 
 var max = "max"
@@ -74,17 +138,17 @@ func saveAsImage(fileName string) *opts.ToolBoxFeatureSaveAsImage {
 	}
 }
 
-func toolBoxFeatures(scenName string) *opts.ToolBoxFeature {
+func toolBoxFeatures(fileName string) *opts.ToolBoxFeature {
 	return &opts.ToolBoxFeature{
-		SaveAsImage: saveAsImage(scenName),
+		SaveAsImage: saveAsImage(fileName),
 		DataZoom:    &dataZoom,
 	}
 }
 
-func toolBoxOpts(scenName string) charts.GlobalOpts {
+func toolBoxOpts(fileName string) charts.GlobalOpts {
 	return charts.WithToolboxOpts(opts.Toolbox{
 		Show:    true,
-		Feature: toolBoxFeatures(scenName),
+		Feature: toolBoxFeatures(fileName),
 	})
 }
 
@@ -107,8 +171,7 @@ var yAxisLabelFormatter = opts.AxisLabel{}
 
 func yAxisOpts(highscore, lowestAvg float64) charts.GlobalOpts {
 	return charts.WithYAxisOpts(opts.YAxis{
-		Type: "value",
-		// Scale:     true,
+		Type:      "value",
 		Max:       10 * ((int(highscore*1.05) + 9) / 10),
 		Min:       10 * (int(lowestAvg*0.95) / 10),
 		AxisLabel: &yAxisLabelFormatter,
