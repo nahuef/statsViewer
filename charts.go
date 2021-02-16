@@ -11,11 +11,11 @@ import (
 func AddLineChart(scen *Scenario) {
 	lineMax := charts.NewLine()
 	lineMax.Renderer = newSnippetRenderer(lineMax, lineMax.Validate)
-	lineMax.SetGlobalOptions(chartGlobalOpts(max, scen.Name, len(scen.ByDateMax), scen.Highscore, scen.LowestAvg))
+	lineMax.SetGlobalOptions(chartGlobalOpts(max, scen.Name, len(scen.ByDateMax), scen.Highscore, scen.LowestAvgScore))
 
 	lineAvg := charts.NewLine()
 	lineAvg.Renderer = newSnippetRenderer(lineAvg, lineAvg.Validate)
-	lineAvg.SetGlobalOptions(chartGlobalOpts(avg, scen.Name, len(scen.ByDateAvg), scen.Highscore, scen.LowestAvg))
+	lineAvg.SetGlobalOptions(chartGlobalOpts(avg, scen.Name, len(scen.ByDateAvg), scen.Highscore, scen.LowestAvgScore))
 
 	maxDates := []string{}
 	maxScores := []opts.LineData{}

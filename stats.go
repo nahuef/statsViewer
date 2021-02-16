@@ -48,11 +48,11 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 	for date, challenge := range max {
 		scen.ByDateMax = append(scen.ByDateMax, map[string]Challenge{date: challenge})
 	}
-	scen.LowestAvg = scen.Highscore
+	scen.LowestAvgScore = scen.Highscore
 	for date, dateAvg := range avg {
 		scen.ByDateAvg = append(scen.ByDateAvg, map[string]DateAvg{date: dateAvg})
-		if dateAvg.Score < scen.LowestAvg {
-			scen.LowestAvg = dateAvg.Score
+		if dateAvg.Score < scen.LowestAvgScore {
+			scen.LowestAvgScore = dateAvg.Score
 		}
 	}
 
@@ -82,9 +82,9 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 
 	mux.Lock()
 	defer mux.Unlock()
-	for k := range ByDate {
-		if !ContainsString(*uniqueDays, k) {
-			*uniqueDays = append(*uniqueDays, k)
+	for date := range ByDate {
+		if !ContainsString(*uniqueDays, date) {
+			*uniqueDays = append(*uniqueDays, date)
 		}
 	}
 	*sortedTimesPlayed = append(*sortedTimesPlayed, scen)
