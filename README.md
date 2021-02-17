@@ -42,7 +42,9 @@ Basicaly you download the app, set the path to your `stats` folder (which is eve
             "stats_path": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\FPSAimTrainer\\FPSAimTrainer\\stats"
         }
         ```
-        If your steam library is not installed in the default location you will need change the path manually to point it to the right `stats` folder (see below "How to find `stats` folder"). Make sure you either use double `\\` or single `/`. Done.
+        > Make sure you duplicate each "\\", as in the example above.
+
+        If your steam library is not installed in the default location you will need change the path manually to point it to the right `stats` folder (Instructions: ["Find your stats folder"](docs/statsFolder.md)). Done.
 
     3. **For the lazy ones**. Copy the contents from `StatsViewer` folder (the one you extracted in step 1) and paste them in the same directory of your `stats` folder.
 
@@ -64,38 +66,6 @@ Basicaly you download the app, set the path to your `stats` folder (which is eve
 
 > *TIP: Run the tool everytime you want to update the charts.*
 
-### How to find your `stats` folder
-(To complete the second step and second option of "How to use")
-1. Open your Steam application and go to Library -> Collections, find `Kovaak 2.0` in the list, right-click -> Manage -> Browse local files.
-    <p align="center">
-        <img alt="Screenshot" src="docs/browseLocalFiles.png">
-    </p>
-
-2. Now we are in Kovaak's installation directory, we need to open the folder `FPSAimTrainer`.
-    <p align="center">
-        <img alt="Screenshot" src="docs/installationFolder.png">
-    </p>
-
-3. Here we can see the `stats` folder, we are almost there! Open it.
-    <p align="center">
-        <img alt="Screenshot" src="docs/FPSAimTrainerDir.png">
-    </p>
-
-4. From inside the `stats` folder, click on the blank space to the right of the selected text shown in the screenshot below, once you do that you should also have the path to the `stats` folder selected and ready to be copied and pasted into the `config.json` file.
-    <p align="center">
-        <img alt="Screenshot" src="docs/statsPath.png">
-    </p>
-
-Paste the path in the `config.json` file, once pasted make sure you duplicate each `\`.
-
-For the screenshots shown above the `config.json` file should look like this:
-```
-{
-	"stats_path": "E:\\GamesSSD\\SteamLibrary\\steamapps\\common\\FPSAimTrainer\\FPSAimTrainer\\stats"
-}
-```
-
-
 ## Troubleshooting & support
 Tested on Windows 10.
 
@@ -109,7 +79,7 @@ This is my first open source side project and also my first time programming in 
 Shipping was prioritized over code quality so if you are a dev and want to check the code, I offer my sincere apology for what your eyes are about to see.
 
 ## Build it from source
-Go 1.15 required.
+Go 1.15+ required.
 
 ```bash
 $ git clone https://github.com/nahuef/statsViewer
