@@ -23,7 +23,8 @@ type Stats struct {
 	DaysPlayed        int
 	TotalScens        int
 	TotalPlayed       int
-	ProgressChart     template.HTML
+	PerformanceChart  template.HTML
+	WordCloud         template.HTML
 }
 
 func newStats() *Stats {
@@ -53,7 +54,7 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 	// Group challenges per date
 	groupedMax, groupedAvg := Group(ByDate, scen.Highscore, scen.Name)
 
-	// Maps into a slice so we can sort them by date
+	// Maps into a slice so we can sort them
 	for date, challenge := range groupedMax {
 		scen.ByDateMax = append(scen.ByDateMax, map[string]Challenge{date: challenge})
 	}
@@ -65,7 +66,7 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 		}
 	}
 
-	// Actually sort them by date (descending)
+	// Actually sort by date (descending)
 	sort.SliceStable(scen.ByDateMax, func(i, j int) bool {
 		var iDate int
 		for k := range scen.ByDateMax[i] {
@@ -96,7 +97,7 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 	if scen.TimesPlayed <= 2 || len(ByDate) <= 1 {
 		return
 	}
-	AddScenarioLineChart(scen)
+	scen.ChartByDate = ScenarioLineChart(scen)
 }
 
 func (s *Stats) forEachScenario() {
@@ -176,7 +177,8 @@ func ParseStats(files []os.FileInfo) *Stats {
 
 	stats.forEachScenario()
 	percentagesToPBByDate(stats)
-	stats.ProgressChart = ProgressChart(&stats.UniqueDays)
+	stats.WordCloud = WordCloud(&stats.Scenarios)
+	stats.PerformanceChart = PerformanceChart(&stats.UniqueDays)
 	stats.DaysPlayed = len(stats.UniqueDays)
 	sort.SliceStable(stats.SortedTimesPlayed, func(i, j int) bool {
 		return stats.SortedTimesPlayed[i].TimesPlayed > stats.SortedTimesPlayed[j].TimesPlayed

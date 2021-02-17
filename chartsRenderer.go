@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io"
 	"log"
+	"strings"
 
 	chartrender "github.com/go-echarts/go-echarts/v2/render"
 )
@@ -74,5 +75,9 @@ func renderToHTML(c interface{}) template.HTML {
 		return ""
 	}
 
-	return template.HTML(buf.String())
+	// Remove weird JS function wrapper that breaks style
+	re := strings.NewReplacer("\"__f__", "", "__f__\"", "")
+	tpl := re.Replace(buf.String())
+
+	return template.HTML(tpl)
 }

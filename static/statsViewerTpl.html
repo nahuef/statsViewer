@@ -1,9 +1,11 @@
 <!DOCTYPE html>
   <head>
+    <meta charset="utf-8">
     <title>Stats Viewer</title>
     <script src="static/statsViewer.js"></script>
+    <script src="static/echarts.min.js"></script>
+    <script src="static/echarts-wordcloud.min.js"></script>
     <link rel="stylesheet" href="static/bootstrap.min.css">
-    <script src="https://go-echarts.github.io/go-echarts-assets/assets/echarts.min.js"></script>
   </head>
 
   <body>
@@ -18,7 +20,16 @@
         <h6>Total challenges: <small class="text-muted">{{.TotalPlayed}}</small></h6>
         <br>
 
-        <div>{{.ProgressChart}}</div>
+        <li id="PerformanceChart" class="list-group-item"><h5>Progress Chart <small class="text-muted">BETA</small></h5>
+          <button id="btnPerformanceChart" class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleChart('PerformanceChart')">Show chart</button>
+          <div id="chartPerformanceChart">{{.PerformanceChart}}</div>
+          <script>toggleChart('PerformanceChart', hide)</script>
+        </li>
+        <li id="WordCloud" class="list-group-item"><h5>Word Cloud</h5>
+          <button id="btnWordCloud" class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleChart('WordCloud')">Show cloud</button>
+          <div id="chartWordCloud">{{.WordCloud}}</div>
+          <script>toggleChart('WordCloud', hide)</script>
+        </li>
 
         <br>
         <h3 class="display-6">Your most played scenarios</h3>
@@ -36,7 +47,7 @@
           <li id="name{{.Name}}" class="list-group-item"><h5>{{.Name}}: <small class="text-muted">{{.TimesPlayed}}</small></h5>
               <button id="btn{{.Name}}" class="btn btn-sm btn-outline-secondary shadow-none" onclick="toggleChart('{{.Name}}')">Show chart</button>
               <div id="chart{{.Name}}" class="charts">{{.ChartByDate}}</div>
-              <script>toggleChart('{{.Name}}', hide)</script> <!-- Autohide chart & button(if no chart) on load -->
+              <script>toggleChart('{{.Name}}', hide)</script>
           </li>
       {{end}}
       <br>

@@ -11,15 +11,11 @@ import (
 	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
-// AddScenarioLineChart ...
-func AddScenarioLineChart(scen *Scenario) {
-	lineMax := charts.NewLine()
-	lineMax.Renderer = newSnippetRenderer(lineMax, lineMax.Validate)
-	lineMax.SetGlobalOptions(chartGlobalOpts(max, scen.Name, len(scen.ByDateMax), scen.Highscore, scen.LowestAvgScore))
-
-	lineAvg := charts.NewLine()
-	lineAvg.Renderer = newSnippetRenderer(lineAvg, lineAvg.Validate)
-	lineAvg.SetGlobalOptions(chartGlobalOpts(avg, scen.Name, len(scen.ByDateAvg), scen.Highscore, scen.LowestAvgScore))
+// ScenarioLineChart ...
+func ScenarioLineChart(scen *Scenario) template.HTML {
+	line := charts.NewLine()
+	line.Renderer = newSnippetRenderer(line, line.Validate)
+	line.SetGlobalOptions(chartGlobalOpts(max, scen.Name, len(scen.ByDateMax), scen.Highscore, scen.LowestAvgScore))
 
 	maxDates := []string{}
 	maxScores := []opts.LineData{}
@@ -45,16 +41,16 @@ func AddScenarioLineChart(scen *Scenario) {
 		}
 	}
 
-	lineMax.SetXAxis(maxDates).
+	line.SetXAxis(maxDates).
 		AddSeries("Max scores", maxScores).
 		AddSeries("Average scores", avgScores).
-		SetSeriesOptions(seriesOpts)
+		SetSeriesOptions(seriesOpts...)
 
-	scen.ChartByDate = renderToHTML(lineMax)
+	return renderToHTML(line)
 }
 
-// ProgressChart ...
-func ProgressChart(uniqueDays *map[string]int) template.HTML {
+// PerformanceChart ...
+func PerformanceChart(uniqueDays *map[string]int) template.HTML {
 	progress := charts.NewLine()
 	progress.Renderer = newSnippetRenderer(progress, progress.Validate)
 	progress.SetGlobalOptions(
@@ -68,8 +64,13 @@ func ProgressChart(uniqueDays *map[string]int) template.HTML {
 			Min:       50,
 			AxisLabel: &yAxisLabelFormatter,
 		}),
-		toolBoxOpts("progress"),
-		tooltipOpts,
+		charts.WithTooltipOpts(opts.Tooltip{
+			Trigger:   "axis",
+			TriggerOn: "mousemove|click",
+			Show:      true,
+			Formatter: "{b}",
+		}),
+		ToolBoxOpts("performance"),
 		xAxisOpts,
 		initOpts,
 	)
@@ -108,7 +109,7 @@ func ProgressChart(uniqueDays *map[string]int) template.HTML {
 
 	progress.SetXAxis(dates).
 		AddSeries("PB %", avgPercentagePBs).
-		SetSeriesOptions(seriesOpts)
+		SetSeriesOptions(seriesOpts...)
 
 	return renderToHTML(progress)
 }
@@ -116,7 +117,10 @@ func ProgressChart(uniqueDays *map[string]int) template.HTML {
 var max = "max"
 var avg = "avg"
 
-var seriesOpts = charts.WithLabelOpts(opts.Label{Show: true, Color: "black"})
+var seriesOpts = []charts.SeriesOpts{
+	charts.WithLabelOpts(opts.Label{Show: true, Color: "black"}),
+	charts.WithLineChartOpts(opts.LineChart{Smooth: true}),
+}
 
 func titleOpts(scenName string, length int) charts.GlobalOpts {
 	return charts.WithTitleOpts(opts.Title{
@@ -145,7 +149,8 @@ func toolBoxFeatures(fileName string) *opts.ToolBoxFeature {
 	}
 }
 
-func toolBoxOpts(fileName string) charts.GlobalOpts {
+// ToolBoxOpts ...
+func ToolBoxOpts(fileName string) charts.GlobalOpts {
 	return charts.WithToolboxOpts(opts.Toolbox{
 		Show:    true,
 		Feature: toolBoxFeatures(fileName),
@@ -183,9 +188,9 @@ var legendOpts = charts.WithLegendOpts(opts.Legend{
 })
 
 var initOpts = charts.WithInitializationOpts(opts.Initialization{
-	// AssetsHost: "static/",
+	AssetsHost: "static/",
 })
 
 func chartGlobalOpts(groupedBy string, scenName string, length int, hs float64, ls float64) (charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts, charts.GlobalOpts) {
-	return titleOpts(scenName, length), toolBoxOpts(scenName), tooltipOpts, xAxisOpts, yAxisOpts(hs, ls), legendOpts, initOpts
+	return titleOpts(scenName, length), ToolBoxOpts(scenName), tooltipOpts, xAxisOpts, yAxisOpts(hs, ls), legendOpts, initOpts
 }
