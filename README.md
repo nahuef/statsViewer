@@ -9,6 +9,7 @@
 
 Originally, the idea was just to list which were the scenarios I had played the most. You already have access to this information in Kovaak's, but there you have to go through tons of scenarios clicking one by one with most of them containing just a few data points, this app shows the same information but sorted by most played.
 
+
 #### Features
 - On the top right of each chart there is a toolbox where you can **zoom in** and **download them as an image** to share on social media.
 
@@ -18,15 +19,31 @@ Originally, the idea was just to list which were the scenarios I had played the 
 
 - Quickly go to a specific scenario by using the browser's search function (`ctrl + f` by default in most browsers).
 
+
+## Performance Chart BETA
+Calculates your performance by getting the average score for every scenario (of that day) and converting it into a percentage of your current high score.
+
+Example:
+```
+Day 1, Scenario X, current high score: 50.
+Challenge scores for day 1: 40, 45, 49.
+Convert those scores into a percentage of high score ((score*100) / high score): 80, 90, 98.
+Day 1, Scenario X performance: 89.
+```
+This is done for each scenario played that day and calculating the performance average of all scenarios.
+
+
 ## Online sample
 Not hyped yet?!
 
 Before you download and run the tool to add value to your training and progress tracking, check out this **[online sample](https://nahuef.github.io/statsViewer/)**.
 
+
 ## How does it work?
 The application will process the files in the `stats` folder to generate a list with a chart per scenario, and output `StatsViewer.html` file in the same directory as the tool's executable `statsViewer.exe`.
 
 That also means that if you lost some of your stats files when switching PC's, uninstalling Kovaak's, reinstalling your operating system or by any other means, that data won't be available in the result.
+
 
 ## How to use
 *It's super simple, I just like to write a lot.*
@@ -66,6 +83,10 @@ Basicaly you download the app, set the path to your `stats` folder (which is eve
 
 > *TIP: Run the tool everytime you want to update the charts.*
 
+## Upgrading version
+Extract this files of the new release onto the old ones and make sure to __replace all files__.
+Or extract them into a different folder and copy the config.json file to this new directory.
+
 ## Troubleshooting & support
 Tested on Windows 10.
 
@@ -73,10 +94,12 @@ If you need some help or found a bug, feel free to [open an issue](https://githu
 
 Suggestions and PR's welcome!
 
+
 ## Disclaimer
 This is my first open source side project and also my first time programming in Go.
 
 Shipping was prioritized over code quality so if you are a dev and want to check the code, I offer my sincere apology for what your eyes are about to see.
+
 
 ## Build it from source
 Go 1.15+ required.
