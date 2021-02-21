@@ -31,9 +31,9 @@ func main() {
 		if StatsPath == DefaultPath {
 			cwd, err := os.Getwd()
 			Check(err)
-			StatsPath = "current working directory " + cwd
+			StatsPath = "Current working directory " + cwd
 		}
-		log.Printf("Error: %v\"stats\" folder not found, make sure the path is right %v", statsNotFound, StatsPath)
+		log.Printf("Error: %v \"stats\" folder not found, make sure the path is right, %v", statsNotFound, StatsPath)
 		EnterToExit()
 	}
 	fmt.Println("\"stats\" folder found!\nParsing files... This may take a few minutes!")
