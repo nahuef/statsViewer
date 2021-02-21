@@ -53,27 +53,6 @@ func ScenarioLineChart(scen *Scenario) template.HTML {
 func PerformanceChart(uniqueDays *map[string]int) template.HTML {
 	progress := charts.NewLine()
 	progress.Renderer = newSnippetRenderer(progress, progress.Validate)
-	progress.SetGlobalOptions(
-		charts.WithTitleOpts(opts.Title{
-			Title:    "Experimental performance tracker",
-			Subtitle: "Data points are average scores for every scenario played that day, converted into a percentage of its highscore.",
-		}),
-		charts.WithYAxisOpts(opts.YAxis{
-			Type:      "value",
-			Max:       100,
-			Min:       50,
-			AxisLabel: &yAxisLabelFormatter,
-		}),
-		charts.WithTooltipOpts(opts.Tooltip{
-			Trigger:   "axis",
-			TriggerOn: "mousemove|click",
-			Show:      true,
-			Formatter: "{b}",
-		}),
-		ToolBoxOpts("performance"),
-		xAxisOpts,
-		initOpts,
-	)
 
 	// Order map by date
 	orderedDates := []map[string]int{}
@@ -92,12 +71,16 @@ func PerformanceChart(uniqueDays *map[string]int) template.HTML {
 		return iDate < jDate
 	})
 
+	lowestAvgPb := 99
 	dates := []string{}
 	avgPercentagePBs := []opts.LineData{}
 	for _, dateAndAvgPercentagePB := range orderedDates {
 		for date, avgPercentagePB := range dateAndAvgPercentagePB {
 			if avgPercentagePB <= 0 {
 				continue
+			}
+			if lowestAvgPb > avgPercentagePB {
+				lowestAvgPb = avgPercentagePB
 			}
 			dates = append(dates, SimplifyDate(date))
 			avgPercentagePBs = append(avgPercentagePBs, opts.LineData{
@@ -106,6 +89,28 @@ func PerformanceChart(uniqueDays *map[string]int) template.HTML {
 			})
 		}
 	}
+
+	progress.SetGlobalOptions(
+		charts.WithTitleOpts(opts.Title{
+			Title:    "Experimental performance tracker",
+			Subtitle: "Data points are average scores for every scenario played that day, converted into a percentage of your current highscore.",
+		}),
+		charts.WithYAxisOpts(opts.YAxis{
+			Type:      "value",
+			Max:       100,
+			Min:       10 * (lowestAvgPb / 10),
+			AxisLabel: &yAxisLabelFormatter,
+		}),
+		charts.WithTooltipOpts(opts.Tooltip{
+			Trigger:   "axis",
+			TriggerOn: "mousemove|click",
+			Show:      true,
+			Formatter: "{b}",
+		}),
+		ToolBoxOpts("performance"),
+		xAxisOpts,
+		initOpts,
+	)
 
 	progress.SetXAxis(dates).
 		AddSeries("PB %", avgPercentagePBs).
