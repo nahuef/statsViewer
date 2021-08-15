@@ -41,9 +41,22 @@ func ScenarioLineChart(scen *Scenario) template.HTML {
 		}
 	}
 
+	wmaDates := []string{}
+	wmaScores := []opts.LineData{}
+	for _, dateScore := range scen.ByDateWMA {
+		for date, dateWMA := range dateScore {
+			wmaDates = append(wmaDates, SimplifyDate(date))
+			wmaScores = append(wmaScores, opts.LineData{
+				Name:  fmt.Sprintf("%v: %v. Grouped: %v", SimplifyDate(date), dateWMA.Avg, dateWMA.Grouped),
+				Value: dateWMA.Avg,
+			})
+		}
+	}
+
 	line.SetXAxis(maxDates).
 		AddSeries("Max scores", maxScores).
 		AddSeries("Average scores", avgScores).
+		AddSeries(strconv.Itoa(DefaultWMAWindow)+"-day Moving Average", wmaScores).
 		SetSeriesOptions(seriesOpts...)
 
 	return renderToHTML(line)

@@ -9,6 +9,12 @@ type DateAvg struct {
 	PercentagePB int
 }
 
+// The weighted moving average
+type DateWMA struct {
+	Avg     float64
+	Grouped int
+}
+
 // Scenario contains all the scenario data including challenges.
 type Scenario struct {
 	fileName       string
@@ -20,5 +26,7 @@ type Scenario struct {
 	LowestAvgScore float64
 	ByDateMax      []map[string]Challenge
 	ByDateAvg      []map[string]DateAvg
+	ByDateScores   []map[string][]float64
+	ByDateWMA      []map[string]DateWMA
 	ChartByDate    template.HTML
 }

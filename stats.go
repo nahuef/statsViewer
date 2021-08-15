@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"html/template"
+	"math"
 	"os"
 	"sort"
 	"strconv"
@@ -52,7 +53,7 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 	}
 
 	// Group challenges per date
-	groupedMax, groupedAvg := Group(ByDate, scen.Highscore, scen.Name)
+	groupedMax, groupedAvg, groupedScore := Group(ByDate, scen.Highscore, scen.Name)
 
 	// Maps into a slice so we can sort them
 	for date, challenge := range groupedMax {
@@ -64,6 +65,9 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 		if dateAvg.Score < scen.LowestAvgScore {
 			scen.LowestAvgScore = dateAvg.Score
 		}
+	}
+	for date, scores := range groupedScore {
+		scen.ByDateScores = append(scen.ByDateScores, map[string][]float64{date: scores})
 	}
 
 	// Actually sort by date (descending)
@@ -89,6 +93,19 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 		}
 		return iDate < jDate
 	})
+	sort.SliceStable(scen.ByDateScores, func(i, j int) bool {
+		var iDate int
+		for k := range scen.ByDateScores[i] {
+			iDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+		}
+		var jDate int
+		for k := range scen.ByDateScores[j] {
+			jDate, _ = strconv.Atoi(strings.ReplaceAll(k, ".", ""))
+		}
+		return iDate < jDate
+	})
+
+	calculateWMA(scen)
 
 	mux.Lock()
 	defer mux.Unlock()
@@ -98,6 +115,17 @@ func scenarioWorker(scen *Scenario, sortedTimesPlayed *[]*Scenario, uniqueDays *
 		return
 	}
 	scen.ChartByDate = ScenarioLineChart(scen)
+}
+
+func calculateWMA(scen *Scenario) {
+	wma := NewWMA(DefaultWMAWindow)
+	for _, dateScores := range scen.ByDateScores {
+		for date, scores := range dateScores {
+			wma.Add(scores...)
+			avg, count := wma.Average()
+			scen.ByDateWMA = append(scen.ByDateWMA, map[string]DateWMA{date: {Avg: math.Round(avg), Grouped: count}})
+		}
+	}
 }
 
 func (s *Stats) forEachScenario() {
