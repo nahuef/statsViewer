@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"html/template"
-	"math"
 	"os"
 	"sort"
 	"strconv"
@@ -123,7 +122,7 @@ func calculateWMA(scen *Scenario) {
 		for date, scores := range dateScores {
 			wma.Add(scores...)
 			avg, count := wma.Average()
-			scen.ByDateWMA = append(scen.ByDateWMA, map[string]DateWMA{date: {Avg: math.Round(avg), Grouped: count}})
+			scen.ByDateWMA = append(scen.ByDateWMA, map[string]DateWMA{date: {Avg: float64(int(avg*10)) / 10, Grouped: count}})
 		}
 	}
 }
