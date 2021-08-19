@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -78,8 +79,35 @@ func TestStatsParse(t *testing.T) {
 				FOV:       103,
 			},
 		},
+		Highscore:      915.9,
+		Lowscore:       915.9,
+		LowestAvgScore: 915.9,
+		ByDateMax: []map[string]Challenge{
+			{
+				"2020.11.13": Challenge{
+					Name:      "TEST Thin Gauntlet",
+					Date:      "2020.11.13",
+					Score:     915.9,
+					SensScale: "Valorant",
+					HSens:     0.3,
+					VSens:     0.3,
+					FOV:       103,
+				},
+			},
+		},
+		ByDateAvg: []map[string]DateAvg{
+			{
+				"2020.11.13": DateAvg{
+					Score:        915.9,
+					Grouped:      1,
+					PercentagePB: 100,
+				},
+			},
+		},
 	}
 
+	reflect.DeepEqual(&expected, stats.Scenarios[testScenName])
+	fmt.Println(reflect.DeepEqual(&expected, stats.Scenarios[testScenName]))
 	assert.Equal(t, &expected, stats.Scenarios[testScenName], "Output Scenario should equal to expected")
 }
 
