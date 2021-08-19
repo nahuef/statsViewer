@@ -15,7 +15,7 @@ Originally, the idea was just to list which were the scenarios I had played the 
 
 - Hover over data points (the dots on the lines) to check the **FOV and sensibility you used to get high scores** and visualize what worked best for you.
 
-- Toggle `max scores` and `average scores` lines by clicking on the legend at the top of the chart.
+- Toggle `max scores`, `average scores` and `7-day moving average` lines by clicking on the legend at the top of the chart.
 
 - Quickly go to a specific scenario by using the browser's search function (`ctrl + f` by default in most browsers).
 
