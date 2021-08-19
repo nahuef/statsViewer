@@ -122,7 +122,8 @@ func calculateWMA(scen *Scenario) {
 		for date, scores := range dateScores {
 			wma.Add(scores...)
 			avg, count := wma.Average()
-			scen.ByDateWMA = append(scen.ByDateWMA, map[string]DateWMA{date: {Avg: float64(int(avg*10)) / 10, Grouped: count}})
+			dateWMA := DateWMA{Avg: float64(int(avg*10)) / 10, Grouped: count}
+			scen.ByDateWMA = append(scen.ByDateWMA, map[string]DateWMA{date: dateWMA})
 		}
 	}
 }
