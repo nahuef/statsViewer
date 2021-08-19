@@ -56,7 +56,7 @@ func ScenarioLineChart(scen *Scenario) template.HTML {
 	line.SetXAxis(maxDates).
 		AddSeries("Max scores", maxScores).
 		AddSeries("Average scores", avgScores).
-		AddSeries(strconv.Itoa(DefaultWMAWindow)+"-day Moving Average", wmaScores).
+		AddSeries(strconv.Itoa(DefaultWMAWindow)+"-day moving average", wmaScores).
 		SetSeriesOptions(seriesOpts...)
 
 	return renderToHTML(line)
