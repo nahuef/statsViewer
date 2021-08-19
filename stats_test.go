@@ -104,6 +104,21 @@ func TestStatsParse(t *testing.T) {
 				},
 			},
 		},
+		ByDateScores: []map[string][]float64{
+			{
+				"2020.11.13": []float64{
+					915.9,
+				},
+			},
+		},
+		ByDateWMA: []map[string]DateWMA{
+			{
+				"2020.11.13": DateWMA{
+					Avg:     915.9,
+					Grouped: 1,
+				},
+			},
+		},
 	}
 
 	reflect.DeepEqual(&expected, stats.Scenarios[testScenName])
