@@ -17,6 +17,8 @@ Originally, the idea was just to list which were the scenarios I had played the 
 
 - Toggle `max scores`, `average scores` and `7-day moving average` lines by clicking on the legend at the top of the chart.
 
+- The `7-day moving average` is a weighted moving average where scores achieved on the same day receive equal weight and the weight decreases in descending order within the 7-day window. This means recent scores contribute more to the average value.
+
 - Quickly go to a specific scenario by using the browser's search function (`ctrl + f` by default in most browsers).
 
 
