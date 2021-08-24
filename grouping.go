@@ -1,9 +1,10 @@
 package main
 
 // Group ...
-func Group(challsByDate map[string][]Challenge, scenHighscore float64, scenName string) (map[string]Challenge, map[string]DateAvg) {
+func Group(challsByDate map[string][]Challenge, scenHighscore float64, scenName string) (map[string]Challenge, map[string]DateAvg, map[string][]float64) {
 	ByDateMax := map[string]Challenge{}
 	ByDateAvg := map[string]DateAvg{}
+	ByDateAll := map[string][]float64{}
 
 	for date, challs := range challsByDate {
 		challsAmount := len(challs)
@@ -11,6 +12,7 @@ func Group(challsByDate map[string][]Challenge, scenHighscore float64, scenName 
 		var maxChall Challenge
 		var avgScore float64
 		var sum float64
+		var allScores []float64
 
 		for i, chall := range challs {
 			if i == 0 || chall.Score > maxScore {
@@ -18,6 +20,7 @@ func Group(challsByDate map[string][]Challenge, scenHighscore float64, scenName 
 				maxChall = chall
 			}
 			sum += chall.Score
+			allScores = append(allScores, chall.Score)
 		}
 
 		avgScore = sum / float64(challsAmount)
@@ -28,9 +31,10 @@ func Group(challsByDate map[string][]Challenge, scenHighscore float64, scenName 
 			Grouped:      challsAmount,
 			PercentagePB: int((avgScore / scenHighscore) * 100),
 		}
+		ByDateAll[date] = allScores
 	}
 
-	return ByDateMax, ByDateAvg
+	return ByDateMax, ByDateAvg, ByDateAll
 }
 
 // Two decimals precision snippet
